@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit</title>
+    <link rel="stylesheet" href="css/bootstrap-lumen.css">
+    <link rel="stylesheet" href="css/Site.css">
+
+</head>
+
+<body onload="fillForm()">
+    <h2 class="title">Edit Product</h2>
+    <div class="form">
+        <form id="editForm" action="/" method="post">
+            <div class="form-group">
+                <label for="Name">Name</label>
+                <input type="text" id="product_Name" name="Name" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success" onclick="submitEditForm()">Edit</button>
+            <a href="./Product.html" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+
+    <!-- <script type="text/javascript" src="/js/script.js">
+    </script> -->
+    <script type="text/javascript" src="./js/product.js">
+    </script>
+</body>
+
+</html>

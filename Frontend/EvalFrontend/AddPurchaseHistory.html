@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add</title>
+    <link rel="stylesheet" href="css/bootstrap-lumen.css">
+    <link rel="stylesheet" href="css/Site.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body onload="init()">
+    <h2 class="title">Invoice Form</h2>
+    <div class="form">
+        <form id="invoiceForm">
+            <div class="form-group">
+                <label for="ddParty">Party</label>
+                <select id="ddParty" class="form-control">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ddProduct">Product</label>
+                <select id="ddProduct" class="form-control">
+                </select>
+
+            </div>
+
+            <div id="divRate" class="form-group">
+                <label for="txtRate">Rate</label>
+                <input type="text" id="txtRate" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="txtDate">Date</label>
+                <input type="date" id="txtDate" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="txtQuantity">Quantity</label>
+                <input type="text" id="txtQuantity" class="form-control" />
+
+            </div>
+
+            <button type="button" id="btnGenerateInvoice" class="btn btn-success">Generate Invoice</button>
+        </form>
+    </div>
+    <div id="dataDiv">
+        <div class="row">
+            <div class="col"><label class="note"> Note: Table shown below is for reference only. Please<b> Close
+                        Invoice</b> to save your invoice data.</label></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <b>Bill No :</b>
+                <p id="#lblInvoice"></p>
+            </div>
+            <div class="col">
+                <b>Party :</b>
+                <p id="#lblParty"></p>
+            </div>
+            <div class="col">
+                <b>Date :</b>
+                <p id="#lblDate"></p>
+            </div>
+        </div>
+        <table id="dataTable" class="table table-bordered table-hover m-3">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <button type="button" id="btnCloseInvoice" class="btn btn-danger">Close Invoice</button>
+    </div>
+
+
+    <script type="text/javascript" src="./js/script.js">
+    </script>
+    <script type="text/javascript" src="./js/invoice.js">
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index</title>
+    <link rel="stylesheet" href="css/bootstrap-lumen.css">
+    <link rel="stylesheet" href="css/Site.css">
+</head>
+
+<body onload="fillManufacturers()">
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+            <div class="container">
+                <div class="navbar-brand">Invoice</div>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse"
+                    title="Toggle navigation" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" href="./Index.html">Manufacturer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./Product.html">Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./AssignPage.html">Assign</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./Rate.html">Rate</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./PurchaseHistory.html">Purchase History</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <h3 class="title">Manufacturer List</h3>
+    <div>
+        <a href="./AddManufacturer.html" class="btn btn-warning mx-3">Add Manufacturer</a>
+    </div>
+
+    <table id="manufacturerTbl" class="table table-bordered table-hover m-3">
+        <thead>
+            <tr>
+                <th>Manufacturers</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+        const Edit = function (btn) {
+            let id = parseInt(btn.id);
+            window.location.href = `EditManufacturer.html?id=${btn.id}`
+        }
+
+
+        const Delete = async function (btn) {
+            let id = btn.id;
+            del(`https://localhost:7146/api/manufacturers/${id}`);
+
+            location.reload();
+        }
+
+        const del = async function (url, errorMsg = "Something went wrong") {
+            return fetch(url, { method: 'DELETE' }).then(response => { console.log(response.status); });
+        };
+    </script>
+    <script type="text/javascript" src="./js/manufacturer.js">
+    </script>
+
+</body>
+
+</html>

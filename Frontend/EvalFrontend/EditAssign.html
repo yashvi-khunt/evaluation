@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit</title>
+    <link rel="stylesheet" href="css/bootstrap-lumen.css">
+    <link rel="stylesheet" href="css/Site.css">
+</head>
+
+<body onload="fillForm()">
+    <h2 class="title">Edit Mapping</h2>
+    <div class="form">
+        <form id="addForm" action="/" method="post">
+            <div class="form-group row">
+                <label class="col" for="parties">Party</label>
+                <select class="col" id="selParty" name="parties">
+
+                </select>
+
+            </div>
+
+            <div class="form-group row">
+                <label class="col" for="products">Product</label>
+                <select class="col" id="selProduct" name="products">
+
+                </select>
+
+            </div>
+            <button type="submit" class="btn btn-success" onclick="submitEditForm()">Edit</button>
+            <a href="./AssignPage.html" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+
+
+
+    <script type="text/javascript" src="./js/assign.js">
+    </script>
+</body>
+
+</html>
