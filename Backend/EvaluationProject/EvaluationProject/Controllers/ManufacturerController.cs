@@ -30,6 +30,19 @@ namespace EvaluationProject.Controllers
             return manufacturersDTO;
         }
 
+        [HttpGet]
+        [Route("forInvoice")]
+        public async Task<ActionResult<List<ManufacturerDTO>>> GetManufacturersForInvoice()
+        {
+            var manufacturers = await _context.Manufacturers
+                .Include(m => m.ManufacturerProductMappings)
+                .Where(m => m.IsDeleted == false)
+                .Join(_context.ManufacturerProductMappings,mid=>mid.Id,mp => mp.ManufacturerId,(mid,mp) => new Manufacturer { Id = mid.Id, Name = mid.Name}).Distinct()
+                .ToListAsync();
+            var manufacturersDTO = mapper.Map<List<ManufacturerDTO>>(manufacturers);
+            return manufacturersDTO;
+        }
+
         [HttpGet("{id}", Name = "getManufacturer")]
         public async Task<ActionResult<ManufacturerDTO>> GetManufacturerById(int id)
         {

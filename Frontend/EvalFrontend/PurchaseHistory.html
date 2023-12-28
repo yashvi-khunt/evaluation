@@ -7,10 +7,15 @@
     <title>Index</title>
     <link rel="stylesheet" href="css/bootstrap-lumen.css">
     <link rel="stylesheet" href="css/Site.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script> -->
 </head>
 
 <body onload="fillInvoices()">
 
+    <!-- <body> -->
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
             <div class="container">
@@ -65,7 +70,7 @@
 
         const View = function (btn) {
             let id = parseInt(btn.id);
-            window.location.href = `ViewPurchaseHistory.html?id=${btn.id}`
+            window.location.href = `ViewPurchaseHistory.html?id=${id}`
         }
 
         const Delete = async function (btn) {

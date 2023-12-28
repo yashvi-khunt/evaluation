@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <link rel="stylesheet" href="css/bootstrap-lumen.css">
+    <link rel="stylesheet" href="css/Site.css">
+    <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+</head>
+
+<body id="body">
+    <div class="container">
+        <h3 class="title">Invoice</h3>
+        <div id="dataDiv" class="row">
+            <div class="row">
+                <div class="col">
+                    <p><b>Bill No :</b></p>
+                    <p id="lblInvoice"></p>
+                </div>
+                <div class="col">
+                    <p><b>Party :</b></p>
+                    <p id="lblParty"></p>
+                </div>
+                <div class="col">
+                    <p><b>Date :</b></p>
+                    <p id="lblDate"></p>
+                </div>
+            </div>
+            <div class="container row">
+                <table id="dataTable" class="table table-bordered table-hover m-3">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Rate</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col btns">
+                <button type="button" id="btnClose" class="btn btn-info">Close </button>
+                <!-- </div>
+            <div class="col"> -->
+                <button type="button" id="btnPrintInvoice" class="btn btn-warning">Print Invoice</button>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript" src="./js/view.js">
+    </script>
+</body>
+
+</html>

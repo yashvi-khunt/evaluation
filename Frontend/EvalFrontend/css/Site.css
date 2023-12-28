@@ -49,6 +49,8 @@ textarea {
 
 .row {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .col {
@@ -65,11 +67,24 @@ textarea {
   justify-content: center;
 }
 
-.table {
+/* .table {
   width: max-content;
-}
+} */
 
 #dataDiv{
-  width: 70%;
+  /* width: 70%; */
  text-align: center;
+}
+
+.tableContainer{
+  display: flex;
+  justify-content: center;
+}
+
+.btns{
+  justify-content: center;
+}
+
+.container{
+  padding: 0;
 }

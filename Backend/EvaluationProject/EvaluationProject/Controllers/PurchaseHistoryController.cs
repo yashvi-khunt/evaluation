@@ -41,7 +41,7 @@ namespace EvaluationProject.Controllers
         [HttpGet("{id}", Name = "getPurchaseHistory")]
         public async Task<ActionResult<List<PurchaseHistoryDTO>>> GetPurchaseHistoryByInvoiceId(int id)
         {
-            var purchaseHistory = await _context.PurchaseHistories.Where(m => m.IsDeleted == false && m.InvoiceId == id).ToListAsync();
+            var purchaseHistory = await _context.PurchaseHistories.Include(m => m.Manufacturer).Include(p => p.Product).Include(r=>r.Rate).Where(m => m.IsDeleted == false && m.InvoiceId == id).ToListAsync();
 
             if (purchaseHistory == null) { return NotFound(); }
             var purchaseHistoryDTO = mapper.Map<List<PurchaseHistoryDTO>>(purchaseHistory);
