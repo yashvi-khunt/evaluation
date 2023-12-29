@@ -22,7 +22,7 @@ namespace EvaluationProject.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MappingDTO>>> Get()
         {
-            var mappings = await _context.ManufacturerProductMappings.Include(m => m.Manufacturer).Include(m=>m.Product).Where(m => m.IsDeleted == false).ToListAsync();
+            var mappings = await _context.ManufacturerProductMappings.Include(m => m.Manufacturer).Include(m=>m.Product).Where(m => m.IsDeleted == false && m.Manufacturer.IsDeleted == false && m.Product.IsDeleted == false).ToListAsync();
             var mappingsDTO = mapper.Map<List<MappingDTO>>(mappings);
             return mappingsDTO;
         }

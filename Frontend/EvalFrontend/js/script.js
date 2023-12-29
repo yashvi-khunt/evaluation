@@ -1,3 +1,50 @@
+const baseURL = " https://localhost:7146/api";
+const getList = async function (url, errorMsg = "Something went wrong") {
+  return fetch(url).then((response) => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+    return response.json();
+  });
+};
+
+const init = async function () {
+  const partyDD = document.getElementById("ddParty");
+  const partyList = await getList(`${baseURL}/manufacturers/forInvoice`);
+  let html = "";
+  partyList.forEach((party) => {
+    html += `
+		  <option value="${party.id}">${party.name}</option>
+		`;
+  });
+  partyDD.insertAdjacentHTML("afterbegin", html);
+
+  // fillProducts(partyList[0].id)
+
+  //     document.getElementById('dataDiv').style.display = 'none';
+  // document.getElementById('txtRate').disabled = true;
+  const productDD = document.getElementById("ddProduct");
+  const productList = await getList(
+    `${baseURL}/products/byManufacturer/${partyList[0].id}`
+  );
+  html = "";
+  productList.forEach((product) => {
+    html += `
+		  <option value="${product.id}">${product.name}</option>
+		`;
+  });
+  productDD.insertAdjacentHTML("afterbegin", html);
+
+  const txtRate = document.getElementById("txtRate");
+  const rate = await fetch(
+    `${baseURL}/rates/byProduct/${productList[0].id}`
+  ).then((response) => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+    return response.json();
+  });
+
+  txtRate.value = rate.amount;
+  firstRate = rate.id;
+};
+
 $(document).ready(function () {
   let tableData = [];
   let isEdit = false;
@@ -340,215 +387,3 @@ $(document).ready(function () {
     return reversed.join("-");
   };
 });
-
-// let tableData = [];
-// const baseURL = " https://localhost:7146/api";
-
-// const fillProducts = function (partyId) {
-//   fetch(`${baseURL}/products/byManufacturer/${partyId}`)
-//     .then(response => response.json())
-//     .then(data => {
-//       document.getElementById('ddProduct').innerHTML = '';
-//       data.forEach(item => {
-//         document.getElementById('ddProduct').innerHTML +=
-//           '<option value="' + item.id + '">' + item.name + '</option>';
-//       });
-
-//       changeRate(data[0].id);
-//     })
-//     .catch(error => {
-//       console.log(error);
-//     });
-// };
-
-// const changeRate = function (productId) {
-//   fetch(`${baseURL}/rates/byProduct/${productId}`)
-//     .then(response => response.json())
-//     .then(result => {
-//       document.getElementById('txtRate').value = result.amount;
-//       tempRate = result.id;
-//     })
-//     .catch(error => {
-//       console.log(error);
-//     });
-// };
-
-// const getInvoiceId =  async function () {
-//   let invId;
-//   fetch(`${baseURL}/invoices/invoiceId`)
-//     .then(response => response.json())
-//     .then(result => {
-//       invId = result.invoiceId + 1;
-//     })
-//     .catch(error => {
-//       console.log(error);
-//     });
-//   return invId;
-// };
-
-// document.getElementById('dataDiv').style.display = 'none';
-// document.getElementById('txtRate').disabled = true;
-// let tempRate;
-
-// document.getElementById('ddParty').addEventListener('change', function () {
-//   let manufacturerId = this.value;
-//   document.getElementById('ddProduct').disabled = false;
-//   fillProducts(manufacturerId);
-// });
-
-// document.getElementById('ddProduct').addEventListener('change', function () {
-//   let productId = this.value;
-//   changeRate(productId);
-// });
-
-// document.getElementById('btnCloseInvoice').addEventListener('click', function () {
-//   console.log(tableData);
-// });
-
-// document.getElementById('btnGenerateInvoice').addEventListener('click',  function () {
-//   const invioceNum =  getInvoiceId();
-
-//   if (validateForm()) {
-//     document.getElementById('ddParty').disabled = true;
-//     document.getElementById('txtDate').disabled = true;
-//     document.getElementById('btnGenerateInvoice').innerHTML = 'Add to Invoice';
-//     document.getElementById('dataDiv').style.display = 'inline';
-
-//     let product = document.getElementById('ddProduct').options[document.getElementById('ddProduct').selectedIndex].text;
-//     let rate = document.getElementById('txtRate').value;
-//     let date = document.getElementById('txtDate').value;
-//     let quantity = document.getElementById('txtQuantity').value;
-//     let total = parseFloat(rate) * parseInt(quantity);
-
-//     let newRow = document.createElement('tr');
-//     newRow.innerHTML =
-//       '<td>' +
-//       product +
-//       '</td><td>' +
-//       rate +
-//       '</td><td>' +
-//       quantity +
-//       '</td><td>' +
-//       total.toFixed(2) +
-//       '</td><td> <button type="button" id="btnEditRow" class="btn text-info">Edit</button>' +
-//       '<button type="button" id="btnDeleteRow" class="btn text-danger">Delete</button>' +
-//       '</td>';
-
-//     document.getElementById('lblInvoice').innerHTML = invioceNum;
-//     document.getElementById('lblParty').innerHTML = document.getElementById('ddParty').options[
-//       document.getElementById('ddParty').selectedIndex
-//     ].text;
-//     document.getElementById('lblDate').innerHTML = date;
-//     document.getElementById('dataTable').appendChild(newRow);
-
-//     let rowData = {
-//       id: tableData.length,
-//       invoiceId: invioceNum,
-//       partyId: document.getElementById('ddParty').value,
-//       productId: document.getElementById('ddProduct').value,
-//       rateId: parseInt(tempRate),
-//       date: date,
-//       Quantity: parseInt(quantity),
-//     };
-//     tableData.push(rowData);
-
-//     fillProducts(document.getElementById('ddParty').value);
-//     document.getElementById('txtQuantity').value = 0;
-//   }
-// });
-
-// function validateForm() {
-//   $(".field-validation-error").remove();
-// 		let isValid = true;
-
-// 		// Validation for AspNetUserId
-// 		// let userId = $("#ddUser").val();
-// 		// if (!userId) {
-// 		// 	isValid = false;
-// 		// 	$("#ddUser").addClass("input-validation-error");
-// 		// 	$("#ddUser").after("<span class='field-validation-error'>Please select a user.</span>");
-// 		// }
-// 		// else {
-// 		// 	$("#ddUser").removeClass("input-validation-error");
-// 		// }
-
-// 		// Validation for ManufacturerId
-// 		let partyId = $("#ddParty").val();
-// 		if (!partyId) {
-// 			isValid = false;
-// 			$("#ddManufacturer").addClass("input-validation-error");
-// 			$("#ddManufacturer").after('<span class="field-validation-error">Please select a party.</span>');
-// 		}
-// 		else {
-// 			$("#ddParty").removeClass("input-validation-error");
-// 		}
-
-// 		// Validation for ProductId
-// 		let productId = $("#ddProduct").val();
-// 		if (!productId) {
-// 			isValid = false;
-// 			$("#ddProduct").addClass("input-validation-error");
-// 			$("#ddProduct").after("<span class='field-validation-error'>Please select a product.</span>");
-// 		}
-// 		else {
-// 			$("#ddProduct").removeClass("input-validation-error");
-// 		}
-
-// 		// Validation for Rate
-// 		let rate = $("#txtRate").val();
-// 		if (!rate || isNaN(rate)) {
-// 			isValid = false;
-// 			$("#txtRate").addClass("input-validation-error");
-// 			$("#txtRate").after("<span class='field-validation-error'>Please enter a valid rate.</span>");
-// 		}
-// 		else {
-// 			$("#txtRate").removeClass("input-validation-error");
-// 		}
-
-// 		// Validation for Date
-// 		let date = $("#txtDate").val();
-// 		if (!date || !isValidDate(date)) {
-// 			isValid = false;
-// 			$("#txtDate").addClass("input-validation-error");
-// 			$("#txtDate").after("<span class='field-validation-error'>Please enter a valid date (dd-MM-yyyy).</span>");
-// 		} else {
-// 			$("#txtDate").removeClass("input-validation-error");
-// 		}
-
-// 		// Validation for Quantity
-// 		let quantity = $("#txtQuantity").val();
-// 		if (!quantity || isNaN(quantity) || quantity <= 0 || quantity > 100) {
-// 			isValid = false;
-// 			$("#txtQuantity").addClass("input-validation-error");
-// 			$("#txtQuantity").after("<span class='field-validation-error'>Please enter a valid quantity between 1 and 100.</span>");
-// 		}
-// 		else {
-// 			$("#txtQuantity").removeClass("input-validation-error");
-// 		}
-
-// 		return isValid;
-// //
-// }
-
-// function isValidDate(dateString) {
-//   const newDate = reverseString(dateString);
-//      // console.log(newDate)
-//   		let regex = /^\d{2}-\d{2}-\d{4}$/;
-//   		if( newDate.match(regex)){
-//         return true;
-//       }else{
-//         return false;
-//       };
-// }
-
-// const reverseString = function (str) {
-//   if(typeof str !== 'string') {
-//           throw new Error('reverseString accepts only strings.');
-//           return;
-//         }
-
-//         let strArr = str.split('-');
-//         let reversed = strArr.reverse();
-
-//         return reversed.join('-');
-// };

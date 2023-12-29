@@ -22,7 +22,7 @@ namespace EvaluationProject.Controllers
         [HttpGet]
         public async Task<ActionResult<List<RateDTO>>> Get()
         {
-            var rates = await _context.Rates.Include(r => r.Product).Where(m => m.IsDeleted == false).ToListAsync();
+            var rates = await _context.Rates.Include(r => r.Product).Where(m => m.IsDeleted == false && m.Product.IsDeleted == false).ToListAsync();
             var ratesDTO = mapper.Map<List<RateDTO>>(rates);
             return ratesDTO;
         }

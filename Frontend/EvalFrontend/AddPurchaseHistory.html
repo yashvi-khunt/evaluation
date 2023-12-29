@@ -4,89 +4,122 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add</title>
+    <title>Invoice - Add Invoice</title>
     <link rel="stylesheet" href="css/bootstrap-lumen.css">
     <link rel="stylesheet" href="css/Site.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body onload="init()">
-    <h2 class="title">Invoice Form</h2>
-    <div class="form">
-        <form id="invoiceForm">
-            <div class="form-group">
-                <label for="ddParty">Party</label>
-                <select id="ddParty" class="form-control">
-                </select>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">Invoice</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="./Index.html">Party</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./Product.html">Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./AssignPage.html">Assign</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./Rate.html">Rate</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./PurchaseHistory.html">Purchase History</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
+        </nav>
+    </header>
+    <div class="container mt-4">
+        <h3 class="title">Invoice Form</h3>
+        <div class="form">
+            <form id="invoiceForm">
+                <div class="form-group">
+                    <label for="ddParty">Party</label>
+                    <select id="ddParty" class="form-control">
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="ddProduct">Product</label>
-                <select id="ddProduct" class="form-control">
-                </select>
+                <div class="form-group">
+                    <label for="ddProduct">Product</label>
+                    <select id="ddProduct" class="form-control">
+                    </select>
 
-            </div>
+                </div>
 
-            <div id="divRate" class="form-group">
-                <label for="txtRate">Rate</label>
-                <input type="text" id="txtRate" class="form-control" />
-            </div>
+                <div id="divRate" class="form-group">
+                    <label for="txtRate">Rate</label>
+                    <input type="text" id="txtRate" class="form-control" />
+                </div>
 
-            <div class="form-group">
-                <label for="txtDate">Date</label>
-                <input type="date" id="txtDate" class="form-control" />
-            </div>
+                <div class="form-group">
+                    <label for="txtDate">Date</label>
+                    <input type="date" id="txtDate" class="form-control" />
+                </div>
 
-            <div class="form-group">
-                <label for="txtQuantity">Quantity</label>
-                <input type="text" id="txtQuantity" class="form-control" />
+                <div class="form-group">
+                    <label for="txtQuantity">Quantity</label>
+                    <input type="text" id="txtQuantity" class="form-control" />
 
-            </div>
+                </div>
 
-            <button type="button" id="btnGenerateInvoice" class="btn btn-success">Generate Invoice</button>
-        </form>
-    </div>
-    <div id="dataDiv">
-        <div class="row">
-            <div class="col"><label class="note"> Note: Table shown below is for reference only. Please<b> Close
-                        Invoice</b> to save your invoice data.</label></div>
+                <button type="button" id="btnGenerateInvoice" class="btn btn-success">Generate Invoice</button>
+            </form>
         </div>
-        <div class="row">
-            <div class="col">
-                <p><b>Bill No :</b></p>
-                <p id="lblInvoice"></p>
+        <div id="dataDiv">
+            <div class="row">
+                <div class="col"><label class="note"> Note: Table shown below is for reference only. Please<b> Close
+                            Invoice</b> to save your invoice data.</label></div>
             </div>
-            <div class="col">
-                <p><b>Party :</b></p>
-                <p id="lblParty"></p>
+            <div class="row">
+                <div class="col">
+                    <p><b>Bill No :</b></p>
+                    <p id="lblInvoice"></p>
+                </div>
+                <div class="col">
+                    <p><b>Party :</b></p>
+                    <p id="lblParty"></p>
+                </div>
+                <div class="col">
+                    <p><b>Date :</b></p>
+                    <p id="lblDate"></p>
+                </div>
             </div>
-            <div class="col">
-                <p><b>Date :</b></p>
-                <p id="lblDate"></p>
-            </div>
+            <table id="dataTable" class="table table-bordered table-hover m-3">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Rate</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <button type="button" id="btnCloseInvoice" class="btn btn-danger">Close Invoice</button>
         </div>
-        <table id="dataTable" class="table table-bordered table-hover m-3">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Rate</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
 
-        <button type="button" id="btnCloseInvoice" class="btn btn-danger">Close Invoice</button>
-    </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
 
-    <script type="text/javascript" src="./js/invoice.js">
-    </script>
-    <script type="text/javascript" src="./js/script.js">
-    </script>
+        <script type="text/javascript" src="./js/common.js"></script>
+        <script type="text/javascript" src="./js/script.js">
+        </script>
 
 </body>
 

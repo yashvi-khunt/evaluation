@@ -2,6 +2,7 @@
 using EvaluationProject.DTOs;
 using EvaluationProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace EvaluationProject.Controllers
@@ -41,7 +42,7 @@ namespace EvaluationProject.Controllers
         [HttpGet("{id}", Name = "getPurchaseHistory")]
         public async Task<ActionResult<List<PurchaseHistoryDTO>>> GetPurchaseHistoryByInvoiceId(int id)
         {
-            var purchaseHistory = await _context.PurchaseHistories.Include(m => m.Manufacturer).Include(p => p.Product).Include(r=>r.Rate).Where(m => m.IsDeleted == false && m.InvoiceId == id).ToListAsync();
+            var purchaseHistory = await _context.PurchaseHistories.Include(m => m.Manufacturer).Include(p => p.Product).Include(r => r.Rate).Where(m => m.IsDeleted == false && m.InvoiceId == id).ToListAsync();
 
             if (purchaseHistory == null) { return NotFound(); }
             var purchaseHistoryDTO = mapper.Map<List<PurchaseHistoryDTO>>(purchaseHistory);
@@ -102,10 +103,108 @@ namespace EvaluationProject.Controllers
 
             var inv = await _context.PurchaseHistories.MaxAsync(x => x.InvoiceId);
             var invoice = await _context.PurchaseHistories.FirstOrDefaultAsync(p => p.InvoiceId == inv);
-            
+
             var result = mapper.Map<InvoiceIdDTO>(invoice);
             return result;
+
+        }
+        [HttpGet]
+        [Route("count")]
+        public async Task<IActionResult> GetInvoiceCount()
+        {
+            var count = await _context.PurchaseHistories
+                .Where(m => m.IsDeleted == false)
+                 .GroupBy(p => new { p.InvoiceId })
+                .Select(group => new PurchaseHistoryListDTO
+                {
+                    InvoiceId = group.Key.InvoiceId,
+                }).CountAsync();
+            if(count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(count);
+        }
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<ActionResult<List<PurchaseHistoryListDTO>>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? subStr = null, int sort = 0)
+       {
+            if (page > pageSize || page <= 0 || pageSize <= 0)
+            {
+                return BadRequest();
+            }
             
+            IQueryable<PurchaseHistoryListDTO> query,phList;
+            phList = _context.PurchaseHistories
+                .Where(m => m.IsDeleted == false)
+                .Include(p => p.Manufacturer)
+                .GroupBy(p => new { p.InvoiceId, p.Manufacturer.Name, p.Date })
+                .Select(group => new PurchaseHistoryListDTO
+                {
+                    InvoiceId = group.Key.InvoiceId,
+                    ManufacturerName = group.Key.Name,
+                    Date = group.Key.Date,
+                });
+           if (sort == 0)
+            {
+                if (string.IsNullOrEmpty(subStr))
+                {
+                    query =phList
+                    .OrderBy(ph => ph.InvoiceId)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+                }
+                else
+                {
+
+                query = phList
+                    .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
+                    .OrderBy(ph => ph.InvoiceId)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+                }
+            }
+            else if (sort == 1)
+            {
+                if (string.IsNullOrEmpty(subStr))
+                {
+                    query = phList
+                    .OrderBy(ph => ph.ManufacturerName)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+                }
+                else
+                {
+
+                    query = phList
+                    .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
+                    .OrderBy(ph => ph.ManufacturerName)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(subStr))
+                {
+                    query = phList
+                    .OrderBy(ph => ph.ManufacturerName)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+                }
+                else
+                {
+                    query = phList
+                    .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
+                    .OrderByDescending(ph => ph.ManufacturerName)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+                }
+            }
+            var purchaseHistories = await query.ToListAsync();
+            var purchaseHistoryDTOs = mapper.Map<List<PurchaseHistoryListDTO>>(purchaseHistories);
+            return Ok(purchaseHistoryDTOs);
         }
 
     }

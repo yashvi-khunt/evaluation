@@ -63,7 +63,7 @@ namespace EvaluationProject.Controllers
             if (isDuplicate)
             {
                 // Handle duplicate entry, for example, return a conflict response
-                return Conflict("Product with the same name already exists.");
+                return Conflict("Party with the same name already exists.");
             }
             var manufacturerDb = await _context.Manufacturers
         .FirstOrDefaultAsync(p => p.Name == manufacturerCreation.Name && p.IsDeleted == true);
@@ -91,14 +91,18 @@ namespace EvaluationProject.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] ManufacturerCreationDTO manufacturerCreation)
         {
-            //duplicate entry
+            var isItself = await _context.Manufacturers.AnyAsync(p => p.Id == id && p.Name== manufacturerCreation.Name);
+            if (isItself)
+            {
+                return Conflict("No change");
+            }
 
             var isDuplicate = await _context.Manufacturers
         .AnyAsync(p => p.Name == manufacturerCreation.Name && p.IsDeleted == false);
             if (isDuplicate)
             {
                 // Handle duplicate entry, for example, return a conflict response
-                return Conflict("Product with the same name already exists.");
+                return Conflict("Party with the same name already exists.");
             }
             var manufacturerDB = await _context.Manufacturers.Where(m => m.IsDeleted == false).FirstOrDefaultAsync(m => m.Id == id);
 
