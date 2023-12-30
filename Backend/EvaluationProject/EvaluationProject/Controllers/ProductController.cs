@@ -76,6 +76,11 @@ namespace EvaluationProject.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] ProductCreationDTO productCreation)
         {
+            var isItself = await _context.Products.AnyAsync(p => p.Id == id && p.Name == productCreation.Name);
+            if (isItself)
+            {
+                return Conflict("No change");
+            }
             //duplicate entry
 
             var isDuplicate = await _context.Products

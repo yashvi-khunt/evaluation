@@ -72,10 +72,14 @@ $(document).ready(function () {
     txtParty.val(partyName);
   });
 
+  $("#editPartyModal").on("hidden.bs.modal", function () {
+    clearFields();
+  });
+
   var clearFields = function () {
-    $("#partyName").removeClass(".input-validation-error");
+    $("#partyName").removeClass("input-validation-error");
     $(".field-validation-error").remove();
-    $("#partyName").removeClass(".input-validation-success");
+    $("#partyName").removeClass("input-validation-success");
     $(".field-validation-success").remove();
   };
 
@@ -161,7 +165,7 @@ $(document).ready(function () {
     let isValid = true;
 
     let partyName = $("#partyName").val();
-    var regex = /^[A-Za-z]+$/;
+    var regex = /^[A-Za-z0-9\s]+$/;
 
     if (!partyName) {
       isValid = false;
