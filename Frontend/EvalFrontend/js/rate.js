@@ -173,25 +173,27 @@ $(document).ready(function () {
     autoWidth: false,
   });
 
+  let deleteId;
   table.on("click", ".delete", function () {
-    var button = $(this);
-    bootbox.confirm(
-      "Are you sure you want to delete this party?",
-      function (result) {
-        if (!result) {
-          return;
-        }
-        $.ajax({
-          url: `${baseURL}/manufacturers/` + button.attr("data-customer-id"),
-          method: "DELETE",
-          success: function () {
-            table.row(button.parents("tr")).remove().draw();
-          },
-        });
-      }
-    );
+    deleteId = $(this).attr("data-product-id");
+    $("#deleteRateModal").modal("show");
   });
 
+  $("#confirmDeleteBtn").on("click", function (e) {
+    e.preventDefault();
+    $.ajax({
+      url: `${baseURL}/rates/` + deleteId,
+      method: "DELETE",
+      success: function () {
+        $("#deleteRateModal").modal("hide");
+        $("#deleteSuccessModal").modal("show");
+        table.ajax.reload();
+      },
+      error: function () {
+        console.log(error);
+      },
+    });
+  });
   table.on("click", ".edit", function () {
     // var id = $(this).attr("data - customer - id");
     // window.location.href = `EditManufacturer.html?id=${id}`;

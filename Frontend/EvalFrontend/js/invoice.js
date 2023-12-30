@@ -131,4 +131,45 @@ const baseURL = " https://localhost:7146/api";
 //   getTableData();
 // });
 
-$(document).ready(function () {});
+$(document).ready(function () {
+  var table = $("#partyTbl").DataTable({
+    ajax: {
+      url: `${baseURL}/manufacturers`,
+      dataSrc: "",
+    },
+    columns: [
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          return meta.row + 1;
+        },
+      },
+      {
+        data: "name",
+      },
+      {
+        data: "id",
+        render: function (data, type, party) {
+          return (
+            "<button class='btn btn-link edit' data-toggle='modal' data-target='#editPartyModal' data-party-id=" +
+            data +
+            ' data-party-name="' +
+            party.name +
+            '">Edit</button>' +
+            "<button class='btn btn-link delete' data-party-id=" +
+            data +
+            ">Delete</button>"
+          );
+        },
+      },
+    ],
+    columnDefs: [{ targets: [0, -1], searchable: false }],
+    paging: true,
+    info: true,
+    language: {
+      emptyTable: "No data available",
+    },
+    responsive: true,
+    autoWidth: false,
+  });
+});

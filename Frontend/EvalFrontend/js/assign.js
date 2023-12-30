@@ -147,12 +147,12 @@ $(document).ready(function () {
       },
       {
         data: "id",
-        render: function (data) {
+        render: function (data, type, party) {
           return (
-            "<button class='btn btn-link edit' data-customer-id=" +
+            "<button class='btn btn-link edit' data-toggle='modal' data-target='#editPartyModal' data-party-id=" +
             data +
             ">Edit</button>" +
-            "<button class='btn btn-link delete' data-customer-id=" +
+            "<button class='btn btn-link delete' data-party-id=" +
             data +
             ">Delete</button>"
           );
@@ -169,27 +169,158 @@ $(document).ready(function () {
     autoWidth: false,
   });
 
-  table.on("click", ".delete", function () {
-    var button = $(this);
-    bootbox.confirm(
-      "Are you sure you want to delete this party?",
-      function (result) {
-        if (!result) {
-          return;
-        }
-        $.ajax({
-          url: `${baseURL}/manufacturers/` + button.attr("data-customer-id"),
-          method: "DELETE",
-          success: function () {
-            table.row(button.parents("tr")).remove().draw();
-          },
-        });
-      }
-    );
+  $("#editAssignModal").on("hidden.bs.modal", function () {
+    clearFields();
   });
 
-  table.on("click", ".edit", function () {
-    // var id = $(this).attr("data - customer - id");
-    // window.location.href = `EditManufacturer.html?id=${id}`;
+  var clearFields = function () {
+    $("#ddParty").removeClass("input-validation-error");
+    $("#ddProduct").removeClass("input-validation-error");
+    $(".field-validation-error").remove();
+    $("#ddParty").removeClass("input-validation-success");
+    $("#ddProduct").removeClass("input-validation-success");
+    $(".field-validation-success").remove();
+  };
+
+  let deleteId;
+  table.on("click", ".delete", function () {
+    deleteId = $(this).attr("data-party-id");
+    $("#deleteAssignModal").modal("show");
+  });
+
+  $("#confirmDeleteBtn").on("click", function (e) {
+    e.preventDefault();
+    $.ajax({
+      url: `${baseURL}/mappings/` + deleteId,
+      method: "DELETE",
+      success: function () {
+        $("#deleteAssignModal").modal("hide");
+        $("#deleteSuccessModal").modal("show");
+        table.ajax.reload();
+      },
+      error: function () {
+        console.log(error);
+      },
+    });
   });
 });
+
+/*
+const baseURL = " https://localhost:7146/api";
+
+$(document).ready(function () {
+
+  let editId;
+  table.on("click", ".edit", function () {
+    editId = $(this).attr("data-party-id");
+    var partyName = $(this).attr("data-party-name");
+    var txtParty = $("#partyName");
+    txtParty.val(partyName);
+  });
+
+  
+
+  $("#editPartyForm").submit(function (e) {
+    e.preventDefault();
+    clearFields();
+    if (!validate()) {
+      return;
+    }
+    var newParty = $("#partyName").val();
+    console.log(newParty);
+    var dataVar = {
+      name: newParty,
+    };
+    $.ajax({
+      url: `${baseURL}/manufacturers/${editId}`,
+      type: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(dataVar),
+      success: function (response) {
+        $("#partyName").addClass("input-validation-success");
+        $("#partyName").after(
+          `<span class="field-validation-success">Party edited successfully!</span>`
+        );
+        table.ajax.reload();
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        if (xhr.status === 409) {
+          $("#partyName").addClass("input-validation-error");
+          $("#partyName").after(
+            `<span class="field-validation-error">${xhr.responseText}</span>`
+          );
+        } else {
+          alert("An error occurred: " + errorThrown);
+        }
+      },
+    });
+  });
+
+  $("#addPartyForm").submit(function (e) {
+    e.preventDefault();
+    clearFields();
+    if (!validate()) {
+      return;
+    }
+    var newParty = $("#partyName").val();
+    console.log(newParty);
+    var dataVar = {
+      name: newParty,
+    };
+    $.ajax({
+      url: `${baseURL}/manufacturers`,
+      type: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(dataVar),
+      success: function (response) {
+        $("#partyName").addClass("input-validation-success");
+        $("#partyName").after(
+          `<span class="field-validation-success">Party added successfully!</span>`
+        );
+        table.ajax.reload();
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        if (xhr.status === 409) {
+          $("#partyName").addClass("input-validation-error");
+          $("#partyName").after(
+            `<span class="field-validation-error">${xhr.responseText}</span>`
+          );
+        } else {
+          alert("An error occurred: " + errorThrown);
+        }
+      },
+    });
+  });
+
+  const validate = function () {
+    $(".field-validation-error").remove();
+
+    let isValid = true;
+
+    let partyName = $("#partyName").val();
+    var regex = /^[A-Za-z0-9\s]+$/;
+
+    if (!partyName) {
+      isValid = false;
+      $("#partyName").addClass("input-validation-error");
+      $("#partyName").after(
+        '<span class="field-validation-error">Please enter a name.</span>'
+      );
+    } else if (!regex.test(partyName)) {
+      isValid = false;
+      $("#partyName").addClass("input-validation-error");
+      $("#partyName").after(
+        '<span class="field-validation-error">Name can contain only numbers and alphabets</span>'
+      );
+    } else {
+      $("#ddParty").removeClass("input-validation-error");
+    }
+
+    return isValid;
+  };
+});
+*/

@@ -1,45 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add</title>
-    <link rel="stylesheet" href="css/bootstrap-lumen.css">
-    <link rel="stylesheet" href="css/Site.css">
-</head>
+    <title>Invoice - Add Rate</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css"
+    />
+    <link
+      href="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="./css/bootstrap-lumen.css" />
+    <link rel="stylesheet" href="./css/Site.css" />
+  </head>
 
-<body onload="fillDD()">
-    <h2 class="title">Rate Form</h2>
-    <div class="form">
-        <form id="rateForm" onsubmit="submitAddForm()">
+  <!-- <body onload="fillDD()"> -->
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#">Invoice</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link active" href="./Index.html">Party</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./Product.html">Product</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./AssignPage.html">Assign</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./Rate.html">Rate</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./PurchaseHistory.html"
+                  >Purchase History</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container mt-4">
+      <h3 class="title">Rate Form</h3>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <form id="addRateForm">
             <div class="form-group">
-                <label for="productName">Product</label>
-                <select id="productName" name="Products" class="form-control">
-
-                </select>
+              <label class="" for="ddProduct">Product</label>
+              <select
+                class="form-select"
+                id="ddProduct"
+                name="product"
+              ></select>
+            </div>
+            <div class="form-group">
+              <label for="txtAmount">Amount</label>
+              <input
+                type="text"
+                class="form-control"
+                id="txtAmount"
+                name="rateAmount"
+              />
+            </div>
+            <div class="form-group">
+              <label for="txtDate">Date</label>
+              <input
+                type="date"
+                class="form-control"
+                id="txtDate"
+                name="rateAmount"
+              />
             </div>
 
-            <div class="form-group">
-                <label for="Rate_Amount">Amount</label>
-                <input type="text" id="Rate_Amount" name="Rate.Amount" class="form-control" placeholder="Enter Rate" />
+            <div class="text-center">
+              <button type="submit" class="btn btn-success">Add Rate</button>
+              <a href="./Index.html" class="btn btn-secondary">Cancel</a>
             </div>
-
-            <div class="form-group">
-                <label for="Ratedate">Date</label>
-                <input type="date" id="Ratedate" name="Rate.Date" class="form-control" placeholder="Enter Date" />
-            </div>
-
-            <button type="submit" class="btn btn-success">Submit</button>
-            <a href="./Rate.html" class="btn btn-danger">Cancel</a>
-        </form>
+          </form>
+        </div>
+      </div>
     </div>
 
-
-    <script type="text/javascript" src="./js/rate.js">
-    </script>
-
-
-</body>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="./js/rate.js"></script>
+  </body>
 </html>
