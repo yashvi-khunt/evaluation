@@ -1,218 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Invoice - Invoice List</title>
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice - Invoice List</title>
 
-    <link
-      href="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-    <link rel="stylesheet" href="./css/bootstrap-lumen.css" />
-    <link rel="stylesheet" href="./css/Site.css" />
-  </head>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
 
-  <body>
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-          <a class="navbar-brand" href="#">Invoice</a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
-                <a class="nav-link active" href="./Index.html">Party</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./Product.html">Product</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./AssignPage.html">Assign</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./Rate.html">Rate</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./PurchaseHistory.html"
-                  >Purchase History</a
-                >
-              </li>
-            </ul>
-          </div>
+  <link href="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./css/bootstrap-lumen.css" />
+  <link rel="stylesheet" href="./css/Site.css" />
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">Invoice</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="./Index.html">Party</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./Product.html">Product</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./AssignPage.html">Assign</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./Rate.html">Rate</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./PurchaseHistory.html">Purchase History</a>
+            </li>
+          </ul>
         </div>
-      </nav>
-    </header>
-
-    <div class="container mt-4">
-      <h3 class="title">Rate List</h3>
-
-      <div class="mb-3">
-        <a href="./AddRate.html" class="btn btn-warning mx-3">Add Rate</a>
       </div>
+    </nav>
+  </header>
 
-      <div class="table-responsive">
-        <table class="table" id="rateTbl">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Product</th>
-              <th>Amount</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+  <div class="container mt-4">
+    <h3 class="title">Rate List</h3>
 
-      <div class="modal" id="editRateModal">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Edit Rate</h4>
-              <button type="button" class="close" data-dismiss="modal">
-                &times;
-              </button>
-            </div>
+    <div class="mb-3">
+      <a href="./AddRate.html" class="btn btn-warning mx-3">Add Rate</a>
+    </div>
 
-            <div class="modal-body">
-              <form id="editRateForm">
-                <div class="form-group">
-                  <label for="ddProduct">Product Name:</label>
-                  <select
-                    type="text"
-                    class="form-select"
-                    id="ddProduct"
-                    name="productName"
-                  ></select>
-                </div>
-                <div class="form-group">
-                  <label for="rateAmt">Amount</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="rateAmt"
-                    name="rateAmt"
-                  />
-                </div>
+    <div class="table-responsive">
+      <table class="table" id="rateTbl">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-                <div class="form-group">
-                  <label for="rateDate">Date</label>
-                  <input
-                    type="date"
-                    id="rateDate"
-                    name="rateDate"
-                    class="form-control"
-                  />
-                </div>
+    <div class="modal" id="editRateModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Rate</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
 
-                <div class="text-center">
-                  <button type="submit" class="btn btn-success">
-                    Edit Rate
-                  </button>
-                </div>
-              </form>
-            </div>
+          <div class="modal-body">
+            <form id="editRateForm">
+              <div class="form-group">
+                <label for="ddProduct">Product Name:</label>
+                <select type="text" class="form-select" id="ddProduct" name="productName"></select>
+              </div>
+              <div class="form-group">
+                <label for="txtAmount">Amount</label>
+                <input type="number" class="form-control" id="txtAmount" name="txtAmount" placeholder="1" />
+              </div>
 
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
+              <div class="form-group">
+                <label for="rateDate">Date</label>
+                <input type="date" id="rateDate" name="rateDate" class="form-control" />
+              </div>
+
+              <div id="msg"></div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-success">
+                  Edit Rate
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <div> <button type="button" class="btn btn-secondary" data-dismiss="modal">
                 Close
               </button>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="modal" id="deleteRateModal">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Delete Rate</h4>
-              <button type="button" class="close" data-dismiss="modal">
-                &times;
-              </button>
-            </div>
-
-            <div class="modal-body">
-              <p>Are you sure you want to delete this rate?</p>
-            </div>
-
-            <div class="modal-footer">
-              <div>
-                <button
-                  type="button"
-                  class="btn btn-info"
-                  id="confirmDeleteBtn"
-                >
-                  Yes, Delete It
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-dismiss="modal"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal" id="deleteSuccessModal">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Success</h4>
-              <button type="button" class="close" data-dismiss="modal">
-                &times;
-              </button>
-            </div>
-
-            <div class="modal-body">
-              <p>Rate deleted successfully.</p>
-            </div>
-
-            <div class="modal-footer">
-              <div>
-                <button
-                  type="button"
-                  class="btn btn-success"
-                  data-dismiss="modal"
-                >
-                  OK
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- <script>
+    <div class="modal" id="deleteRateModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Delete Rate</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>Are you sure you want to delete this rate?</p>
+          </div>
+
+          <div class="modal-footer">
+            <div>
+              <button type="button" class="btn btn-info" id="confirmDeleteBtn">
+                Yes, Delete It
+              </button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="deleteSuccessModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Success</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>Rate deleted successfully.</p>
+          </div>
+
+          <div class="modal-footer">
+            <div>
+              <button type="button" class="btn btn-success" data-dismiss="modal">
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script>
         const Edit = function (btn) {
             let id = parseInt(btn.id);
             window.location.href = `EditRate.html?id=${btn.id}`
@@ -229,12 +184,13 @@
             return fetch(url, { method: 'DELETE' }).then(response => { console.log(response.status); });
         };
     </script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
-    <script type="text/javascript" src="./js/common.js"></script>
-    <script type="text/javascript" src="./js/rate.js"></script>
-  </body>
+  <script type="text/javascript" src="./js/common.js"></script>
+  <script type="text/javascript" src="./js/rate.js"></script>
+</body>
+
 </html>

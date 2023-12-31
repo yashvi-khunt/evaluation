@@ -16,13 +16,14 @@ const getList = async function (url, errorMsg = "Something went wrong") {
 
 const init = async function () {
   const urlParams = new URLSearchParams(window.location.search);
-  invoiceId = urlParams.get("id");
+  const invoiceId = urlParams.get("id");
   const invoices = await getList(`${baseURL}/invoices/${invoiceId}`);
 
   lblInvoice.innerHTML = invoices[0].invoiceId;
   lblParty.innerHTML = invoices[0].manufacturerName;
-  const dt = new Date(invoices[0].date);
-  lblDate.innerHTML = dt.toLocaleDateString();
+  // const dt = new Date(invoices[0].date);
+
+  lblDate.innerHTML = formatDate(invoices[0].date);
   console.log(tableBody);
   invoices.forEach((element) => {
     const total = element.rateAmount * element.quantity;

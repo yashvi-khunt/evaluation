@@ -77,6 +77,11 @@ namespace EvaluationProject.Controllers
         public async Task<ActionResult> Put(int id, [FromBody] RateCreationDTO rateCreation)
         {
             //duplicate entry
+            var isItself = await _context.Rates.AnyAsync(r => r.Id == id && r.Amount== rateCreation.Amount && r.Date==rateCreation.Date && r.IsDeleted ==false);
+            if (isItself)
+            {
+                return Conflict("No change");
+            }
 
             //    var isDuplicate = await _context.Rates
             //.AnyAsync(p => p.Name == rateCreation.Name && p.IsDeleted == false);

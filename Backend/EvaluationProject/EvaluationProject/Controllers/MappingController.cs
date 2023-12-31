@@ -46,7 +46,7 @@ namespace EvaluationProject.Controllers
             if (isDuplicate)
             {
                 // Handle duplicate entry, for example, return a conflict response
-                return Conflict("Product with the same name already exists.");
+                return Conflict("Mapping with the same name already exists.");
             }
             var mappingDb = await _context.ManufacturerProductMappings
         .FirstOrDefaultAsync(p => p.ManufacturerId == mappingCreation.ManufacturerId && p.ProductId == mappingCreation.ProductId && p.IsDeleted == true);
@@ -76,6 +76,12 @@ namespace EvaluationProject.Controllers
         public async Task<ActionResult> Put(int id, [FromBody] MappingCreationDTO mappingCreation)
         {
             //duplicate entry
+
+            var isItself = await _context.ManufacturerProductMappings.AnyAsync(p => p.Id == id && p.ProductId == mappingCreation.ProductId && p.ManufacturerId == mappingCreation.ManufacturerId);
+            if (isItself)
+            {
+                return Conflict("No change");
+            }
             var isDuplicate = await _context.ManufacturerProductMappings
         .AnyAsync(p => p.ProductId == mappingCreation.ProductId && p.ManufacturerId == mappingCreation.ManufacturerId);
             if (isDuplicate)

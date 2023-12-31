@@ -132,9 +132,9 @@ const baseURL = " https://localhost:7146/api";
 // });
 
 $(document).ready(function () {
-  var table = $("#partyTbl").DataTable({
+  var table = $("#invoiceTbl").DataTable({
     ajax: {
-      url: `${baseURL}/manufacturers`,
+      url: `${baseURL}/invoices`,
       dataSrc: "",
     },
     columns: [
@@ -145,20 +145,35 @@ $(document).ready(function () {
         },
       },
       {
-        data: "name",
+        data: "invoiceId",
+      },
+      {
+        data: "manufacturerName",
+      },
+      {
+        data: "date",
+        render: function (data) {
+          var date = formatDate(data);
+          return date;
+        },
+      },
+      {
+        data: "grandTotal",
       },
       {
         data: "id",
-        render: function (data, type, party) {
+        render: function (data, type, invoice) {
           return (
-            "<button class='btn btn-link edit' data-toggle='modal' data-target='#editPartyModal' data-party-id=" +
-            data +
-            ' data-party-name="' +
-            party.name +
-            '">Edit</button>' +
-            "<button class='btn btn-link delete' data-party-id=" +
-            data +
-            ">Delete</button>"
+            // "<button class='btn btn-link edit' data-toggle='modal' data-target='#editPartyModal' data-party-id=" +
+            // data +
+            // ' data-party-name="' +
+            // party.name +
+            // '">Edit</button>' +
+            // "<button class='btn btn-link delete' data-party-id=" +
+            // data +
+            // ">Delete</button>"
+            `<button class="btn btn-link view" data-invoice-id="${invoice.invoiceId}">View Details</button>
+                              <button class="btn btn-link delete" data-invoice-id="${invoice.invoiceId}" >Delete</button>`
           );
         },
       },
@@ -171,5 +186,34 @@ $(document).ready(function () {
     },
     responsive: true,
     autoWidth: false,
+  });
+
+  let deleteId;
+  table.on("click", ".delete", function () {
+    deleteId = $(this).attr("data-invoice-id");
+    $("#deleteInvoiceModal").modal("show");
+  });
+
+  $("#confirmDeleteBtn").on("click", function (e) {
+    e.preventDefault();
+    $.ajax({
+      url: `${baseURL}/invoices/` + deleteId,
+      method: "DELETE",
+      success: function () {
+        $("#deleteInvoiceModal").modal("hide");
+        $("#deleteSuccessModal").modal("show");
+        table.ajax.reload();
+      },
+      error: function () {
+        console.log(error);
+      },
+    });
+  });
+
+  table.on("click", ".view", function () {
+    var button = $(this);
+    var btnId = button.attr("data-invoice-id");
+
+    window.location.href = `ViewPurchaseHistory.html?id=${btnId}`;
   });
 });

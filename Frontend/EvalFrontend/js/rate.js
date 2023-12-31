@@ -37,17 +37,17 @@ const baseURL = " https://localhost:7146/api";
 
 // function submitAddForm() {
 //     const pName = parseInt(document.getElementById('productName').value);
-//     const rateAmt = parseInt(document.getElementById('Rate_Amount').value)
+//     const txtAmount = parseInt(document.getElementById('Rate_Amount').value)
 //     const date = document.getElementById('Ratedate').value;
 //     // Get form data
-//     console.log(pName,rateAmt,date);
+//     console.log(pName,txtAmount,date);
 //     fetch(`${baseURL}/rates`, {
 //         method: "POST",
 //         headers: {
 //             "Content-Type": "application/json",
 //         },
 //         body: JSON.stringify({
-//             "amount": rateAmt,
+//             "amount": txtAmount,
 //             "date": date,
 //             "productId": pName,
 //         }),
@@ -67,17 +67,17 @@ const baseURL = " https://localhost:7146/api";
 
 // function submitEditForm() {
 //     const pName = parseInt(document.getElementById('productName').value);
-//     const rateAmt = parseInt(document.getElementById('Rate_Amount').value)
+//     const txtAmount = parseInt(document.getElementById('Rate_Amount').value)
 //     const date = document.getElementById('Ratedate').value;
 //     // Get form data
-//     console.log(pName,rateAmt,date);
+//     console.log(pName,txtAmount,date);
 //     fetch(`${baseURL}/rates/${rateId}`, {
 //         method: "PUT",
 //         headers: {
 //             "Content-Type": "application/json",
 //         },
 //         body: JSON.stringify({
-//             "amount": rateAmt,
+//             "amount": txtAmount,
 //             "date": date,
 //             "productId": pName,
 //         }),
@@ -117,8 +117,8 @@ const baseURL = " https://localhost:7146/api";
 
 //     const productMapping =  document.getElementById('productName');
 //     productMapping.value = rateObj.productId;
-//     const rateAmt = document.getElementById('Rate_Amount');
-//     rateAmt.value = rateObj.amount;
+//     const txtAmount = document.getElementById('Rate_Amount');
+//     txtAmount.value = rateObj.amount;
 //     const dateVar = document.getElementById('Ratedate');
 //     dateVar.value = rateObj.date.split("T")[0];
 // }
@@ -153,10 +153,10 @@ $(document).ready(function () {
         data: "id",
         render: function (data) {
           return (
-            "<button class='btn btn-link edit' data-customer-id=" +
+            "<button class='btn btn-link edit' data-toggle='modal' data-target='#editRateModal' data-rate-id=" +
             data +
             ">Edit</button>" +
-            "<button class='btn btn-link delete' data-customer-id=" +
+            "<button class='btn btn-link delete' data-rate-id=" +
             data +
             ">Delete</button>"
           );
@@ -173,9 +173,29 @@ $(document).ready(function () {
     autoWidth: false,
   });
 
+  const fillProductDD = function () {
+    $.ajax({
+      url: `${baseURL}/products`,
+      method: "GET",
+      success: function (data) {
+        var ddProduct = $("#ddProduct");
+        ddProduct.empty(); // Clear existing options
+
+        data.forEach(function (product) {
+          ddProduct.append(
+            '<option value="' + product.id + '">' + product.name + "</option>"
+          );
+        });
+      },
+      error: function (error) {
+        console.error("Error fetching products:", error);
+      },
+    });
+  };
+
   let deleteId;
   table.on("click", ".delete", function () {
-    deleteId = $(this).attr("data-product-id");
+    deleteId = $(this).attr("data-rate-id");
     $("#deleteRateModal").modal("show");
   });
 
@@ -194,8 +214,157 @@ $(document).ready(function () {
       },
     });
   });
-  table.on("click", ".edit", function () {
-    // var id = $(this).attr("data - customer - id");
-    // window.location.href = `EditManufacturer.html?id=${id}`;
+
+  $("#editRateModal").on("hidden.bs.modal", function () {
+    clearFields();
   });
+
+  var clearFields = function () {
+    $("#ddProduct").removeClass("input-validation-error");
+    $("#txtAmount").removeClass("input-validation-error");
+    $("#rateDate").removeClass("input-validation-error");
+    $(".field-validation-error").remove();
+    $("#ddProduct").removeClass("input-validation-success");
+    $("#txtAmount").removeClass("input-validation-success");
+    $("#rateDate").removeClass("input-validation-success");
+    $(".field-validation-success").remove();
+  };
+
+  table.on("click", ".edit", function () {
+    fillProductDD();
+    editId = $(this).attr("data-rate-id");
+    console.log(editId);
+    $.ajax({
+      url: `${baseURL}/rates/${editId}`,
+      method: "GET",
+      success: function (data) {
+        console.log(data);
+        $("#ddProduct").val(data.productId);
+        $("#txtAmount").val(data.amount);
+        $("#rateDate").val(data.date.substring(0, 10));
+      },
+      error: function (error) {
+        console.error("Something went wrong", error);
+      },
+    });
+  });
+  $("#editRateForm").submit(function (e) {
+    e.preventDefault();
+    clearFields();
+    if (!validate()) {
+      return;
+    }
+    var newProduct = $("#ddProduct").val();
+    var newDate = $("#rateDate").val();
+
+    var dataVar = {
+      productId: newProduct,
+      date: newDate,
+      amount: $("#txtAmount").val(),
+    };
+    console.log(dataVar);
+    $.ajax({
+      url: `${baseURL}/rates/${editId}`,
+      type: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(dataVar),
+      success: function (response) {
+        $("#ddProduct").addClass("input-validation-success");
+        $("#txtAmount").addClass("input-validation-success");
+        $("#rateDate").addClass("input-validation-success");
+        $("#msg").after(
+          `<span class="field-validation-success">Rate edited successfully!</span>`
+        );
+        table.ajax.reload();
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        if (xhr.status === 409) {
+          $("#ddProduct").addClass("input-validation-error");
+          $("#txtAmount").addClass("input-validation-error");
+          $("#rateDate").addClass("input-validation-error");
+          $("#msg").after(
+            `<span class="field-validation-error">${xhr.responseText}</span>`
+          );
+        } else {
+          alert("An error occurred: " + errorThrown);
+        }
+      },
+    });
+  });
+  fillProductDD();
+
+  $("#addRateForm").submit(function (e) {
+    e.preventDefault();
+    clearFields();
+    if (!validate()) {
+      return;
+    }
+    var newProduct = $("#ddProduct").val();
+    var newDate = $("#rateDate").val();
+
+    var dataVar = {
+      productId: newProduct,
+      date: newDate,
+      amount: $("#txtAmount").val(),
+    };
+    console.log(dataVar);
+    $.ajax({
+      url: `${baseURL}/rates`,
+      type: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(dataVar),
+      success: function (response) {
+        $("#ddProduct").addClass("input-validation-success");
+        $("#txtAmount").addClass("input-validation-success");
+        $("#rateDate").addClass("input-validation-success");
+        $("#msg").after(
+          `<span class="field-validation-success">Rate added successfully!</span>`
+        );
+        table.ajax.reload();
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        if (xhr.status === 409) {
+          $("#ddProduct").addClass("input-validation-error");
+          $("#txtAmount").addClass("input-validation-error");
+          $("#rateDate").addClass("input-validation-error");
+          $("#msg").after(
+            `<span class="field-validation-error">${xhr.responseText}</span>`
+          );
+        } else {
+          alert("An error occurred: " + errorThrown);
+        }
+      },
+    });
+  });
+
+  const validate = function () {
+    $(".field-validation-error").remove();
+
+    let isValid = true;
+
+    let amount = $("#txtAmount").val();
+    console.log(amount == 0);
+    var regex = /^(0*[1-9]\d*(\.\d+)?|0*\.\d*[1-9]\d*)$/;
+    if (!amount) {
+      isValid = false;
+      $("#txtAmount").addClass("input-validation-error");
+      $("#txtAmount").after(
+        '<span class="field-validation-error">Please enter a rate.</span>'
+      );
+    } else if (!regex.test(amount) || amount == 0) {
+      isValid = false;
+      $("#txtAmount").addClass("input-validation-error");
+      $("#txtAmount").after(
+        '<span class="field-validation-error">Rate should be greater than zero</span>'
+      );
+    } else {
+      $("#txtAmount").removeClass("input-validation-error");
+    }
+
+    return isValid;
+  };
 });
