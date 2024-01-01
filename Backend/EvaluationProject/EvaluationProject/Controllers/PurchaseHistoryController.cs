@@ -26,8 +26,8 @@ namespace EvaluationProject.Controllers
         {
             var purchaseHistories = await _context.PurchaseHistories
                 .Where(m => m.IsDeleted == false)
-                .Include(p => p.Manufacturer).
-                Include(p => p.Rate)
+                .Include(p => p.Manufacturer)
+                .Include(p => p.Rate)
                 .GroupBy(p => new { p.InvoiceId, p.Manufacturer.Name, p.Date })
                 .Select(group => new PurchaseHistoryListDTO
                 {
@@ -121,89 +121,153 @@ namespace EvaluationProject.Controllers
                 {
                     InvoiceId = group.Key.InvoiceId,
                 }).CountAsync();
-            if(count == 0)
+            if (count == 0)
             {
                 return NotFound();
             }
             return Ok(count);
         }
 
+        // [HttpGet]
+        // [Route("search")]
+        // public async Task<ActionResult<List<PurchaseHistoryListDTO>>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? subStr = null, int sort = 0)
+        //{
+        //     if (page > pageSize || page <= 0 || pageSize <= 0)
+        //     {
+        //         return BadRequest();
+        //     }
+
+        //     IQueryable<PurchaseHistoryListDTO> query,phList;
+        //     phList = _context.PurchaseHistories
+        //         .Where(m => m.IsDeleted == false)
+        //         .Include(p => p.Manufacturer)
+        //          .Include(p => p.Rate)
+        //         .GroupBy(p => new { p.InvoiceId, p.Manufacturer.Name, p.Date })
+        //         .Select(group => new PurchaseHistoryListDTO
+        //         {
+        //             InvoiceId = group.Key.InvoiceId,
+        //             ManufacturerName = group.Key.Name,
+        //             Date = group.Key.Date,
+        //             GrandTotal = group.Sum(p => p.Rate.Amount * p.Quantity)
+        //         });
+        //    if (sort == 0)
+        //     {
+        //         if (string.IsNullOrEmpty(subStr))
+        //         {
+        //             query =phList
+        //             .OrderBy(ph => ph.InvoiceId)
+        //             .Skip((page - 1) * pageSize)
+        //             .Take(pageSize);
+        //         }
+        //         else
+        //         {
+
+        //         query = phList
+        //             .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr) || ph.InvoiceId.ToString().Contains(subStr) || ph.GrandTotal.ToString().Contains(subStr))
+        //             .OrderBy(ph => ph.InvoiceId)
+        //             .Skip((page - 1) * pageSize)
+        //             .Take(pageSize);
+        //         }
+        //     }
+        //     else if (sort == 1)
+        //     {
+        //         if (string.IsNullOrEmpty(subStr))
+        //         {
+        //             query = phList
+        //             .OrderBy(ph => ph.ManufacturerName)
+        //             .Skip((page - 1) * pageSize)
+        //             .Take(pageSize);
+        //         }
+        //         else
+        //         {
+
+        //             query = phList
+        //             .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
+        //             .OrderBy(ph => ph.ManufacturerName)
+        //             .Skip((page - 1) * pageSize)
+        //             .Take(pageSize);
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if (string.IsNullOrEmpty(subStr))
+        //         {
+        //             query = phList
+        //             .OrderBy(ph => ph.ManufacturerName)
+        //             .Skip((page - 1) * pageSize)
+        //             .Take(pageSize);
+        //         }
+        //         else
+        //         {
+        //             query = phList
+        //             .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
+        //             .OrderByDescending(ph => ph.ManufacturerName)
+        //             .Skip((page - 1) * pageSize)
+        //             .Take(pageSize);
+        //         }
+        //     }
+        //     var purchaseHistories = await query.ToListAsync();
+        //     var purchaseHistoryDTOs = mapper.Map<List<PurchaseHistoryListDTO>>(purchaseHistories);
+        //     return Ok(purchaseHistoryDTOs);
+        // }
+
         [HttpGet]
         [Route("search")]
-        public async Task<ActionResult<List<PurchaseHistoryListDTO>>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? subStr = null, int sort = 0)
-       {
+        public async Task<ActionResult<List<PurchaseHistoryListDTO>>> Get([FromQuery] int page = 1,
+                                                                          [FromQuery] int pageSize = 10,
+                                                                          [FromQuery] string? subStr = null,
+                                                                          [FromQuery] int sortColumn = 0, 
+                                                                          [FromQuery] int sortOrder = 0
+                                                                        )
+        {
             if (page > pageSize || page <= 0 || pageSize <= 0)
             {
                 return BadRequest();
             }
-            
-            IQueryable<PurchaseHistoryListDTO> query,phList;
+
+            IQueryable<PurchaseHistoryListDTO> query, phList;
             phList = _context.PurchaseHistories
                 .Where(m => m.IsDeleted == false)
                 .Include(p => p.Manufacturer)
+                .Include(p => p.Rate)
                 .GroupBy(p => new { p.InvoiceId, p.Manufacturer.Name, p.Date })
                 .Select(group => new PurchaseHistoryListDTO
                 {
                     InvoiceId = group.Key.InvoiceId,
                     ManufacturerName = group.Key.Name,
                     Date = group.Key.Date,
+                    GrandTotal = group.Sum(p => p.Rate.Amount * p.Quantity)
                 });
-           if (sort == 0)
-            {
-                if (string.IsNullOrEmpty(subStr))
-                {
-                    query =phList
-                    .OrderBy(ph => ph.InvoiceId)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize);
-                }
-                else
-                {
 
-                query = phList
-                    .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
-                    .OrderBy(ph => ph.InvoiceId)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize);
-                }
-            }
-            else if (sort == 1)
-            {
-                if (string.IsNullOrEmpty(subStr))
-                {
-                    query = phList
-                    .OrderBy(ph => ph.ManufacturerName)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize);
-                }
-                else
-                {
 
-                    query = phList
-                    .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
-                    .OrderBy(ph => ph.ManufacturerName)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize);
-                }
-            }
-            else
+            switch (sortColumn)
             {
-                if (string.IsNullOrEmpty(subStr))
-                {
-                    query = phList
-                    .OrderBy(ph => ph.ManufacturerName)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize);
-                }
-                else
-                {
-                    query = phList
-                    .Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr))
-                    .OrderByDescending(ph => ph.ManufacturerName)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize);
-                }
+                case 1: //  InvoiceId (ascending)
+                    query = sortOrder == 0 ? phList.OrderBy(ph => ph.InvoiceId) : phList.OrderByDescending(ph => ph.InvoiceId);
+                    break;
+                case 2: //  ManufacturerName (ascending)
+                    query = sortOrder == 0 ? phList.OrderBy(ph => ph.ManufacturerName) : phList.OrderByDescending(ph => ph.ManufacturerName);
+                    break;
+                case 3: //  Date (ascending)
+                    query = sortOrder == 0 ? phList.OrderBy(ph => ph.Date) : phList.OrderByDescending(ph => ph.Date);
+                    break;
+                case 4: //  GrandTotal (ascending)
+                    query = sortOrder == 0 ? phList.OrderBy(ph => ph.GrandTotal) : phList.OrderByDescending(ph => ph.GrandTotal);
+                    break;
+                default: // Default (by InvoiceId ascending)
+                    query = phList.OrderBy(ph => ph.InvoiceId);
+                    break;
             }
+
+
+            if (!string.IsNullOrEmpty(subStr))
+            {
+                query = query.Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr) || ph.InvoiceId.ToString().Contains(subStr) || ph.GrandTotal.ToString().Contains(subStr));
+            }
+
+
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+
             var purchaseHistories = await query.ToListAsync();
             var purchaseHistoryDTOs = mapper.Map<List<PurchaseHistoryListDTO>>(purchaseHistories);
             return Ok(purchaseHistoryDTOs);
