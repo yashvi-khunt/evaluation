@@ -1,0 +1,77 @@
+<!-- editInvoice.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice - Edit Invoice</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap-lumen.css" />
+    <link rel="stylesheet" href="./css/Site.css" />
+</head>
+
+<body onload="init()">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">Invoice</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="./Index.html">Party</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./Product.html">Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./AssignPage.html">Assign</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./Rate.html">Rate</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./PurchaseHistory.html">Purchase History</a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link" href="#">Sign In</a>
+                        </li> -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="signOutBtn">Sign Out</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mt-4">
+        <h3 class="title">Edit Invoice</h3>
+        <div class="form">
+            <form id="editInvoiceForm">
+
+            </form>
+        </div>
+        <div id="dataDiv">
+
+            <button type="button" id="btnSaveEdit" class="btn btn-success">Save Changes</button>
+            <a href="./PurchaseHistory.html" type="button" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
+
+    <script type="text/javascript" src="./js/common.js"></script>
+    <script type="text/javascript" src="./js/edit.js"></script>
+</body>
+
+</html>

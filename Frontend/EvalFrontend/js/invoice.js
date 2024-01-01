@@ -18,22 +18,12 @@ const getList = async function (url, errorMsg = "Something went wrong") {
 };
 
 Array.prototype.swapFirstTwo = function () {
-  // Ensure the array has at least two elements
   if (this.length >= 2) {
-    // Swap the first two elements
     [this[0], this[1]] = [this[1], this[0]];
   }
-  // Return the modified array for chaining
   return this;
 };
 const updateEntriesInfo = async function (search) {
-  // const totalEntries = await fetch(
-  //   `${baseURL}/invoices/count?search=${search || ""}`
-  // ).then((response) => {
-  //   if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
-  //   return response.json();
-  // });
-
   const startEntry = (currPage - 1) * pageSize + 1;
   const endEntry = Math.min(currPage * pageSize, totalEntries);
 
@@ -59,6 +49,9 @@ const fillTable = function (invoices) {
                 
                 <td>${el.grandTotal}</td>
                 <td>
+                <button class="btn btn-link edit" data-invoice-id="${
+                  el.invoiceId
+                }" >Edit</button>
                 <button class="btn btn-link view" data-invoice-id="${
                   el.invoiceId
                 }" >View Details</button>
@@ -105,13 +98,6 @@ $(document).ready(function () {
 
   txtPageSize.addEventListener("change", function () {
     pageSize = txtPageSize.value;
-  });
-
-  $(invoiceTable).on("click", ".view", function () {
-    var button = $(this);
-    var btnId = button.attr("data-invoice-id");
-
-    window.location.href = `ViewPurchaseHistory.html?id=${btnId}`;
   });
 
   $("#txtSearch").on("change keyup", function () {
@@ -192,120 +178,14 @@ $(document).ready(function () {
     var button = $(this);
     var btnId = button.attr("data-invoice-id");
 
-    window.location.href = `ViewPurchaseHistory.html?id=${btnId}`;
+    window.location.href = `./ViewPurchaseHistory.html?id=${btnId}`;
   });
-
-  const fillPartyDD = function (currId) {
-    $.ajax({
-      url: `${baseURL}/manufacturers`,
-      method: "GET",
-      success: function (data) {
-        var ddParty = $("#ddParty");
-        ddParty.empty();
-        data.forEach(function (party) {
-          ddParty.append(
-            '<option value="' + party.id + '">' + party.name + "</option>"
-          );
-        });
-        ddParty.val(currId);
-      },
-      error: function (error) {
-        console.error("Error fetching parties:", error);
-      },
-    });
-  };
-
-  const fillProductDD = function (ddId, id, currId) {
-    $.ajax({
-      url: `${baseURL}/products/byManufacturer/${id}`,
-      method: "GET",
-      success: function (data) {
-        var ddProduct = $(`#ddProduct${ddId}`);
-        ddProduct.empty();
-        data.forEach(function (product) {
-          ddProduct.append(
-            '<option value="' + product.id + '">' + product.name + "</option>"
-          );
-        });
-      },
-      error: function (error) {
-        console.error("Error fetching products:", error);
-      },
-    });
-  };
-
-  function populateEditModal(data) {
-    $("#editInvoiceForm").empty();
-    const inputField = `<div class="form-group">
-    <label for="partyName">Party</label>
-    <select class="form-select" id="ddParty" name="party"></select>
-</div>`;
-    $("#editInvoiceForm").append(inputField);
-    fillPartyDD(data[0].manufacturerId);
-    data.forEach((item, index) => {
-      const inputField = `<div class="form-group">
-      <label class="" for="ddProduct">Product</label>
-      <select class="form-select product" id="ddProduct${index}" name="product"></select>
-                            </div>`;
-      $("#editInvoiceForm").append(inputField);
-      fillProductDD(index, item.manufacturerId, item.productId);
-    });
-  }
 
   invoiceTable.on("click", ".edit", function () {
     var button = $(this);
     var btnId = button.attr("data-invoice-id");
 
-    $.ajax({
-      url: `${baseURL}/invoices/` + btnId,
-      method: "GET",
-      success: function (data) {
-        console.log(data);
-        populateEditModal(data);
-      },
-      error: function () {
-        console.log(error);
-      },
-    });
+    // Redirect to the Edit Invoice page with the invoice ID as a parameter
+    window.location.href = `./EditPurchaseHistory.html?id=${btnId}`;
   });
-
-  // $("#editInvoiceForm").submit(function (e) {
-  //   e.preventDefault();
-  //   clearFields();
-  //   var newParty = $("#ddParty").val();
-  //   var newProduct = $("#ddProduct").val();
-
-  //   var dataVar = {
-  //     manufacturerId: newParty,
-  //     productId: newProduct,
-  //   };
-  //   $.ajax({
-  //     url: `${baseURL}/mappings/${editId}`,
-  //     type: "PUT",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: JSON.stringify(dataVar),
-  //     success: function (response) {
-  //       $("#ddParty").addClass("input-validation-success");
-  //       $("#ddProduct").addClass("input-validation-success");
-  //       $("#msg").after(
-  //         `<span class="field-validation-success">Mapping added successfully!</span>`
-  //       );
-  //       table.ajax.reload();
-  //     },
-  //     error: function (xhr, textStatus, errorThrown) {
-  //       if (xhr.status === 409) {
-  //         $("#ddParty").addClass("input-validation-error");
-  //         $("#ddProduct").addClass("input-validation-error");
-
-  //         $("#msg").after(
-  //           `<span class="field-validation-error">${xhr.responseText}</span>`
-  //         );
-  //       } else {
-  //         alert("An error occurred: " + errorThrown);
-  //       }
-  //     },
-  //   });
-  // });
 });
