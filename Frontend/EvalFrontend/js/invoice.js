@@ -157,24 +157,15 @@ $(document).ready(function () {
           return date;
         },
       },
-      {
-        data: "grandTotal",
-      },
+      // {
+      //   data: "grandTotal",
+      // },
       {
         data: "id",
         render: function (data, type, invoice) {
-          return (
-            // "<button class='btn btn-link edit' data-toggle='modal' data-target='#editPartyModal' data-party-id=" +
-            // data +
-            // ' data-party-name="' +
-            // party.name +
-            // '">Edit</button>' +
-            // "<button class='btn btn-link delete' data-party-id=" +
-            // data +
-            // ">Delete</button>"
-            `<button class="btn btn-link view" data-invoice-id="${invoice.invoiceId}">View Details</button>
-                              <button class="btn btn-link delete" data-invoice-id="${invoice.invoiceId}" >Delete</button>`
-          );
+          return `<button class="btn btn-link edit" data-toggle='modal' data-target='#editInvoiceModal' data-invoice-id="${invoice.invoiceId}" >Edit</button>
+            <button class="btn btn-link view" data-invoice-id="${invoice.invoiceId}">View Details</button>
+            <button class="btn btn-link delete" data-invoice-id="${invoice.invoiceId}" >Delete</button>`;
         },
       },
     ],
@@ -215,5 +206,121 @@ $(document).ready(function () {
     var btnId = button.attr("data-invoice-id");
 
     window.location.href = `ViewPurchaseHistory.html?id=${btnId}`;
+  });
+
+  const fillPartyDD = function (currId) {
+    $.ajax({
+      url: `${baseURL}/manufacturers`,
+      method: "GET",
+      success: function (data) {
+        var ddParty = $("#ddParty");
+        ddParty.empty();
+        data.forEach(function (party) {
+          ddParty.append(
+            '<option value="' + party.id + '">' + party.name + "</option>"
+          );
+        });
+        ddParty.val(currId);
+      },
+      error: function (error) {
+        console.error("Error fetching parties:", error);
+      },
+    });
+  };
+
+  const fillProductDD = function (ddId, id, currId) {
+    $.ajax({
+      url: `${baseURL}/products/byManufacturer/${id}`,
+      method: "GET",
+      success: function (data) {
+        var ddProduct = $(`#ddProduct${ddId}`);
+        ddProduct.empty();
+        data.forEach(function (product) {
+          ddProduct.append(
+            '<option value="' + product.id + '">' + product.name + "</option>"
+          );
+        });
+      },
+      error: function (error) {
+        console.error("Error fetching products:", error);
+      },
+    });
+  };
+
+  function populateEditModal(data) {
+    $("#editInvoiceForm").empty();
+    const inputField = `<div class="form-group">
+    <label for="partyName">Party</label>
+    <select class="form-select" id="ddParty" name="party"></select>
+</div>`;
+    $("#editInvoiceForm").append(inputField);
+    fillPartyDD(data[0].manufacturerId);
+    data.forEach((item, index) => {
+      const inputField = `<div class="form-group">
+      <label class="" for="ddProduct">Product</label>
+      <select class="form-select product" id="ddProduct${index}" name="product"></select>
+                            </div>`;
+      $("#editInvoiceForm").append(inputField);
+      fillProductDD(index, item.manufacturerId, item.productId);
+    });
+  }
+
+  table.on("click", ".edit", function () {
+    var button = $(this);
+    var btnId = button.attr("data-invoice-id");
+
+    $.ajax({
+      url: `${baseURL}/invoices/` + btnId,
+      method: "GET",
+      success: function (data) {
+        console.log(data);
+        populateEditModal(data);
+      },
+      error: function () {
+        console.log(error);
+      },
+    });
+  });
+
+  $("#editInvoiceForm").submit(function (e) {
+    e.preventDefault();
+    var products = $(".product");
+    console.log(products);
+    //   clearFields();
+    //   var newParty = $("#ddParty").val();
+    //   var newProduct = $("#ddProduct").val();
+
+    //   var dataVar = {
+    //     manufacturerId: newParty,
+    //     productId: newProduct,
+    //   };
+    //   $.ajax({
+    //     url: `${baseURL}/mappings/${editId}`,
+    //     type: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     data: JSON.stringify(dataVar),
+    //     success: function (response) {
+    //       $("#ddParty").addClass("input-validation-success");
+    //       $("#ddProduct").addClass("input-validation-success");
+    //       $("#msg").after(
+    //         `<span class="field-validation-success">Mapping added successfully!</span>`
+    //       );
+    //       table.ajax.reload();
+    //     },
+    //     error: function (xhr, textStatus, errorThrown) {
+    //       if (xhr.status === 409) {
+    //         $("#ddParty").addClass("input-validation-error");
+    //         $("#ddProduct").addClass("input-validation-error");
+
+    //         $("#msg").after(
+    //           `<span class="field-validation-error">${xhr.responseText}</span>`
+    //         );
+    //       } else {
+    //         alert("An error occurred: " + errorThrown);
+    //       }
+    //     },
+    //   });
   });
 });

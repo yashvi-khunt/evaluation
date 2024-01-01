@@ -1,5 +1,8 @@
 using EvaluationProject.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace EvaluationProject
 {
@@ -21,6 +24,22 @@ namespace EvaluationProject
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddCors();
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+     .AddJwtBearer(options =>
+     {
+         options.TokenValidationParameters = new TokenValidationParameters
+         {
+             ValidateIssuer = false,
+             ValidateAudience = false,
+             ValidateLifetime = true,
+             ValidateIssuerSigningKey = true,
+             ValidIssuer = "https://localhost:7146",
+             ValidAudience = "https://localhost:7146", 
+             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("evaluationAPIkey12345"))
+         };
+     });
+            builder.Services.AddAuthorization();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -33,6 +52,7 @@ namespace EvaluationProject
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

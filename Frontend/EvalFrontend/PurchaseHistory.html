@@ -39,6 +39,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="./PurchaseHistory.html">Purchase History</a>
                         </li>
+                        <!-- <li class="nav-item">
+                                <a class="nav-link" href="#">Sign In</a>
+                            </li> -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="signOutBtn">Sign Out</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -66,7 +72,7 @@
                     <th>Bill No:</th>
                     <th>Party</th>
                     <th>Date</th>
-                    <th>Amount</th>
+                    <!-- <th>Amount</th> -->
                     <th>Action</th>
                 </tr>
             </thead>
@@ -122,6 +128,25 @@
     </div>
     </div>
     </div>-->
+
+        <div class="modal" id="editInvoiceModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Purchase History</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editInvoiceForm">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="btnSaveEdit">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal" id="deleteInvoiceModal">
             <div class="modal-dialog  modal-dialog-centered">
                 <div class="modal-content">

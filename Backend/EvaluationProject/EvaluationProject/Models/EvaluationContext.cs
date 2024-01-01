@@ -21,9 +21,7 @@ namespace EvaluationProject.Models
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<PurchaseHistory> PurchaseHistories { get; set; } = null!;
         public virtual DbSet<Rate> Rates { get; set; } = null!;
-        public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
-        public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -113,40 +111,9 @@ namespace EvaluationProject.Models
                     .HasConstraintName("FK_dbo.Rates_dbo.Products_ProductId");
             });
 
-            modelBuilder.Entity<Role>(entity =>
-            {
-                entity.Property(e => e.Id).HasMaxLength(128);
-
-                entity.Property(e => e.Name).HasMaxLength(256);
-            });
-
             modelBuilder.Entity<User>(entity =>
             {
-                entity.Property(e => e.Id).HasMaxLength(128);
-
-                entity.Property(e => e.Email).HasMaxLength(256);
-
-                entity.Property(e => e.FirstName)
-                    .HasMaxLength(128)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.LastName)
-                    .HasMaxLength(128)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.LockoutEndDateUtc).HasColumnType("datetime");
-
                 entity.Property(e => e.UserName).HasMaxLength(256);
-            });
-
-            modelBuilder.Entity<UserRole>(entity =>
-            {
-                entity.HasKey(e => new { e.UserId, e.RoleId })
-                    .HasName("PK_dbo.UserRoles");
-
-                entity.Property(e => e.UserId).HasMaxLength(128);
-
-                entity.Property(e => e.RoleId).HasMaxLength(128);
             });
 
             OnModelCreatingPartial(modelBuilder);

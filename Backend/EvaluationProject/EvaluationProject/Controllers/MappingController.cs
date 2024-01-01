@@ -69,7 +69,7 @@ namespace EvaluationProject.Controllers
 
             var mappingDTO = mapper.Map<MappingDTO>(mapping);
 
-            return new CreatedAtRouteResult("get", new { id = mapping.Id }, mappingDTO);
+            return new CreatedAtRouteResult("getMapping", new { id = mapping.Id }, mappingDTO);
         }
 
         [HttpPut("{id}")]
