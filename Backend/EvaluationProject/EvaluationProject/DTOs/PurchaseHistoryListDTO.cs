@@ -7,7 +7,7 @@
 
         public string ManufacturerName { get; set; } = string.Empty;
 
-        public int GrandTotal { get; set; }
+        public float GrandTotal { get; set; }
         public DateTime Date { get; set; }
     }
 }

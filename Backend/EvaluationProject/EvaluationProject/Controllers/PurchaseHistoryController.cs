@@ -26,13 +26,15 @@ namespace EvaluationProject.Controllers
         {
             var purchaseHistories = await _context.PurchaseHistories
                 .Where(m => m.IsDeleted == false)
-                .Include(p => p.Manufacturer)
+                .Include(p => p.Manufacturer).
+                Include(p => p.Rate)
                 .GroupBy(p => new { p.InvoiceId, p.Manufacturer.Name, p.Date })
                 .Select(group => new PurchaseHistoryListDTO
                 {
                     InvoiceId = group.Key.InvoiceId,
                     ManufacturerName = group.Key.Name,
                     Date = group.Key.Date,
+                    GrandTotal = group.Sum(p => p.Rate.Amount * p.Quantity)
                 }).ToListAsync();
 
             var purchaseHistoriesDTO = mapper.Map<List<PurchaseHistoryListDTO>>(purchaseHistories);

@@ -157,9 +157,9 @@ $(document).ready(function () {
           return date;
         },
       },
-      // {
-      //   data: "grandTotal",
-      // },
+      {
+        data: "grandTotal",
+      },
       {
         data: "id",
         render: function (data, type, invoice) {
@@ -282,45 +282,43 @@ $(document).ready(function () {
     });
   });
 
-  $("#editInvoiceForm").submit(function (e) {
-    e.preventDefault();
-    var products = $(".product");
-    console.log(products);
-    //   clearFields();
-    //   var newParty = $("#ddParty").val();
-    //   var newProduct = $("#ddProduct").val();
+  // $("#editInvoiceForm").submit(function (e) {
+  //   e.preventDefault();
+  //   clearFields();
+  //   var newParty = $("#ddParty").val();
+  //   var newProduct = $("#ddProduct").val();
 
-    //   var dataVar = {
-    //     manufacturerId: newParty,
-    //     productId: newProduct,
-    //   };
-    //   $.ajax({
-    //     url: `${baseURL}/mappings/${editId}`,
-    //     type: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     data: JSON.stringify(dataVar),
-    //     success: function (response) {
-    //       $("#ddParty").addClass("input-validation-success");
-    //       $("#ddProduct").addClass("input-validation-success");
-    //       $("#msg").after(
-    //         `<span class="field-validation-success">Mapping added successfully!</span>`
-    //       );
-    //       table.ajax.reload();
-    //     },
-    //     error: function (xhr, textStatus, errorThrown) {
-    //       if (xhr.status === 409) {
-    //         $("#ddParty").addClass("input-validation-error");
-    //         $("#ddProduct").addClass("input-validation-error");
+  //   var dataVar = {
+  //     manufacturerId: newParty,
+  //     productId: newProduct,
+  //   };
+  //   $.ajax({
+  //     url: `${baseURL}/mappings/${editId}`,
+  //     type: "PUT",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     data: JSON.stringify(dataVar),
+  //     success: function (response) {
+  //       $("#ddParty").addClass("input-validation-success");
+  //       $("#ddProduct").addClass("input-validation-success");
+  //       $("#msg").after(
+  //         `<span class="field-validation-success">Mapping added successfully!</span>`
+  //       );
+  //       table.ajax.reload();
+  //     },
+  //     error: function (xhr, textStatus, errorThrown) {
+  //       if (xhr.status === 409) {
+  //         $("#ddParty").addClass("input-validation-error");
+  //         $("#ddProduct").addClass("input-validation-error");
 
-    //         $("#msg").after(
-    //           `<span class="field-validation-error">${xhr.responseText}</span>`
-    //         );
-    //       } else {
-    //         alert("An error occurred: " + errorThrown);
-    //       }
-    //     },
-    //   });
-  });
+  //         $("#msg").after(
+  //           `<span class="field-validation-error">${xhr.responseText}</span>`
+  //         );
+  //       } else {
+  //         alert("An error occurred: " + errorThrown);
+  //       }
+  //     },
+  //   });
+  // });
 });

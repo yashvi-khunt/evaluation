@@ -3,6 +3,7 @@ const baseURL = " https://localhost:7146/api";
 const lblInvoice = document.getElementById("lblInvoice");
 const lblParty = document.getElementById("lblParty");
 const lblDate = document.getElementById("lblDate");
+const lblTotal = document.getElementById("lblTotal");
 const tableBody = document.querySelector("#dataTable tbody");
 
 const btnPrint = document.getElementById("btnPrintInvoice");
@@ -21,7 +22,7 @@ const init = async function () {
 
   lblInvoice.innerHTML = invoices[0].invoiceId;
   lblParty.innerHTML = invoices[0].manufacturerName;
-  // const dt = new Date(invoices[0].date);
+  let grandTotal = 0;
 
   lblDate.innerHTML = formatDate(invoices[0].date);
   console.log(tableBody);
@@ -33,9 +34,11 @@ const init = async function () {
      <td>  ${element.quantity}  </td>
     <td>  ${total.toFixed(2)} </td>
     </tr>`;
-
+    grandTotal += element.rateAmount * element.quantity;
     tableBody.insertAdjacentHTML("afterbegin", html);
     console.log(html);
+
+    lblTotal.innerHTML = grandTotal;
   });
 };
 const createDocName = function () {
