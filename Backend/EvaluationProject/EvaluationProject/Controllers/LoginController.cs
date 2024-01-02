@@ -57,6 +57,11 @@ namespace EvaluationProject.Controllers
         [Route("/api/register")]
         public async Task<IActionResult> Register(User user)
         {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == user.UserName);
+            if(existingUser != null)
+            {
+                return Conflict("User with same username exists.");
+            }
 
             _context.Add(user);
             await _context.SaveChangesAsync();

@@ -1,12 +1,24 @@
 const baseURL = " https://localhost:7146/api";
 
 $(document).ready(function () {
-  $("#username").removeClass("input-validation-error");
-  $("#password").removeClass("input-validation-error");
-  $(".field-validation-error").remove();
+  function isPasswordValid(password) {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+    return passwordRegex.test(password);
+  }
 
   $("#loginForm").submit(function (e) {
+    $("#username").removeClass("input-validation-error");
+    $("#password").removeClass("input-validation-error");
+    $(".field-validation-error").remove();
     e.preventDefault();
+
+    if (!isPasswordValid(pwd)) {
+      $("#password").addClass("input-validation-error");
+      $("#msg").text(
+        "Password must be at least 8-16 characters long and include at least one letter and one number."
+      );
+      return;
+    }
 
     $("#username").removeClass("input-validation-error");
     $("#password").removeClass("input-validation-error");
@@ -46,28 +58,52 @@ $(document).ready(function () {
     });
   });
 
-  $(document).ready(function () {
-    $("#signupForm").submit(function (event) {
-      event.preventDefault();
-      const uname = $("#username").val();
-      const pwd = $("#password").val();
+  $("#signupForm").submit(function (e) {
+    $(".field-validation-error").remove();
+    $(".field-validation-success").remove();
+    $("#cfpassword").removeClass("input-validaiton-error");
+    $("#password").removeClass("input-validation-error");
 
-      const dataVar = {
-        userName: uname,
-        passwordHash: pwd,
-      };
-      $.ajax({
-        type: "POST",
-        url: `${baseURL}/register`,
-        contentType: "application/json",
-        data: JSON.stringify(dataVar),
-        success: function (response) {
-          window.location.href = "./Login.html";
-        },
-        error: function (xhr, status, error) {
-          console.error("Error:", error);
-        },
-      });
+    e.preventDefault();
+    const uname = $("#username").val();
+    const pwd = $("#password").val();
+    const cfPwd = $("#cfpassword").val();
+
+    if (!isPasswordValid(pwd)) {
+      $("#password").addClass("input-validation-error");
+      $("#msg").text(
+        "Password must be at least 8-16 characters long and include at least one letter and one number."
+      );
+      return;
+    }
+
+    if (pwd !== cfPwd) {
+      $("#cfpassword").addClass("input-validation-error");
+      $("#msg").text("Passwords do not match");
+      return;
+    }
+
+    const dataVar = {
+      userName: uname,
+      passwordHash: pwd,
+    };
+
+    $.ajax({
+      type: "POST",
+      url: `${baseURL}/register`,
+      contentType: "application/json",
+      data: JSON.stringify(dataVar),
+      success: function (response) {
+        window.location.href = "./Login.html";
+      },
+      error: function (xhr, status, error) {
+        if (xhr.status === 409) {
+          $("#msg").after(
+            `<span class="field-validation-error">${xhr.responseText}</span>`
+          );
+        }
+        console.error("Error:", error);
+      },
     });
   });
 });

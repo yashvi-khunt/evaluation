@@ -56,7 +56,7 @@ namespace EvaluationProject.Controllers
                 mappingDb.IsDeleted = false;
                 _context.Entry(mappingDb).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
-                var mappingDbDTO = mapper.Map<ProductDTO>(mappingDb);
+                var mappingDbDTO = mapper.Map<MappingDTO>(mappingDb);
                 return new CreatedAtRouteResult("getMapping", new { id = mappingDb.Id }, mappingDbDTO);
             }
 

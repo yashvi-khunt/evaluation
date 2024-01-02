@@ -125,12 +125,35 @@ namespace EvaluationProject.Controllers
             var products = await (from product in _context.Products
                             join mapping in _context.ManufacturerProductMappings on product.Id equals mapping.ProductId
                             join party in _context.Manufacturers on mapping.ManufacturerId equals party.Id
-                            where party.Id == id && party.IsDeleted == false && mapping.IsDeleted == false && product.IsDeleted == false
+                                  join rate in _context.Rates on product.Id equals rate.ProductId
+                                  where party.Id == id && party.IsDeleted == false && mapping.IsDeleted == false && product.IsDeleted == false
                             select new ProductDTO
                             {
                                 Id = product.Id,
                                 Name = product.Name
-                            }).ToListAsync();
+                            }).Distinct().ToListAsync();
+
+
+            var productsDTO = mapper.Map<List<ProductDTO>>(products);
+            return productsDTO;
+        }
+
+        [HttpGet]
+        [Route("byInvoice/{id}")]
+        public async Task<ActionResult<List<ProductDTO>>> GetProductsByPartyIdForInvoice(int id)
+        {
+            //var products = await _context.Products.Include(p => p.ManufacturerProductMappings).Join().ToListAsync();
+
+            var products = await (from product in _context.Products
+                                  join mapping in _context.ManufacturerProductMappings on product.Id equals mapping.ProductId
+                                  join party in _context.Manufacturers on mapping.ManufacturerId equals party.Id
+                                  join rate in _context.Rates on product.Id equals rate.ProductId
+                                  where party.Id == id && party.IsDeleted == false && mapping.IsDeleted == false
+                                  select new ProductDTO
+                                  {
+                                      Id = product.Id,
+                                      Name = product.Name
+                                  }).Distinct().ToListAsync();
 
 
             var productsDTO = mapper.Map<List<ProductDTO>>(products);

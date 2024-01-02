@@ -103,13 +103,13 @@ $(document).ready(function () {
   $("#txtSearch").on("change keyup", function () {
     // console.log($("#txtSearch").val());
     var search = $("#txtSearch").val();
-    console.log(search, pageSize);
+    // console.log(search, pageSize);
     getTableData(search);
   });
 
   $("#paginate").on("click", "a", function () {
     $("#paginate a.active").removeClass("active");
-    console.log(this);
+    // console.log(this);
     $(this).addClass("active");
     currPage = $(this).text();
 
@@ -139,9 +139,9 @@ $(document).ready(function () {
   $("#invoiceTbl thead").on("click", "th", function () {
     $("#invoiceTbl thead th").removeClass("sorting_asc sorting_desc");
     var columnIndex = $(this).index();
-    console.log(columnIndex);
+    // console.log(columnIndex);
     if (columnIndex > 0 && columnIndex < 5) selectedColumn = columnIndex;
-    console.log(selectedColumn);
+    // console.log(selectedColumn);
     sortOrder = sortOrder === 0 ? 1 : 0;
     sortOrder === 0
       ? $(`#invoiceTbl thead th:eq(${selectedColumn})`).addClass("sorting_asc")
@@ -161,7 +161,7 @@ $(document).ready(function () {
   $("#confirmDeleteBtn").on("click", function (e) {
     e.preventDefault();
     $.ajax({
-      url: `${baseURL}/invoices/` + deleteId,
+      url: `${baseURL}/invoices/invoiceId/` + deleteId,
       method: "DELETE",
       success: function () {
         $("#deleteInvoiceModal").modal("hide");
@@ -180,12 +180,196 @@ $(document).ready(function () {
 
     window.location.href = `./ViewPurchaseHistory.html?id=${btnId}`;
   });
+  // -------------  Edit Modal ----------------------
+  let partyId,
+    invId,
+    date,
+    rateId,
+    isAdd = false;
+  const fillProducts = function (partyId) {
+    $.ajax({
+      type: "GET",
+      url: `${baseURL}/products/byInvoice/${partyId}`,
+      success: function (data) {
+        // console.log(data);
+        $("#ddProduct").empty();
+        $.each(data, function (index, item) {
+          $("#ddProduct").append(
+            '<option value="' + item.id + '">' + item.name + "</option>"
+          );
+        });
+        changeRate(data[0].id);
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  };
+  $("#txtRate").prop("disabled", true);
+
+  const getEditList = function (id) {
+    $.ajax({
+      type: "GET",
+      url: `${baseURL}/invoices/${id}`,
+      success: function (data) {
+        // console.log(data)
+        $("#dataTable tbody").empty();
+        fillEditTable(data);
+        fillProducts(data[0].manufacturerId);
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  };
+
+  $("#ddProduct").on("change", function () {
+    const productId = $("#ddProduct").val();
+    changeRate(productId);
+  });
+
+  const changeRate = function (productId) {
+    $.ajax({
+      type: "GET",
+      url: `${baseURL}/rates/byProduct/${productId}`,
+      success: function (result) {
+        // console.log(result);
+        $("#txtRate").val("");
+        $("#txtRate").val(result.amount);
+        rateId = result.id;
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  };
+
+  const fillEditTable = function (invoices) {
+    $.each(invoices, function (i, el) {
+      const total = el.rateAmount * el.quantity;
+      let newRow = $("<tr>");
+      newRow.append("<td>" + el.productName + "</td>");
+      // newRow.append('<td>' + manufacturer + '</td>');
+      newRow.append("<td>" + el.rateAmount + "</td>");
+      newRow.append("<td>" + el.quantity + "</td>");
+      newRow.append("<td>" + total.toFixed(2) + "</td>");
+      newRow.append(
+        "<td>" +
+          ` <button type="button" id="btnEditRow" class="btn btn-sm text-info row-edit" data-row-id= ${el.id} data-row-product=${el.productId} data-quantity=${el.quantity}>Edit</button>
+             <button type="button" class="btn text-danger btn-sm row-delete" data-row-id= ${el.id}>Delete</button>` +
+          "</td>"
+      );
+
+      $("#dataTable tbody").append(newRow);
+      $("#lblInvoice").text(invoices[0].invoiceId);
+      invId = invoices[0].invoiceId;
+      $("#lblParty").text(invoices[0].manufacturerName);
+      partyId = invoices[0].manufacturerId;
+      $("#lblDate").text(formatDate(invoices[0].date));
+      date = invoices[0].date;
+    });
+  };
 
   invoiceTable.on("click", ".edit", function () {
     var button = $(this);
     var btnId = button.attr("data-invoice-id");
+    getEditList(btnId);
+    $("#editInvoiceModal").modal("show");
+    $("#editInvoiceForm").css("display", "none");
+    $("#btnSaveEdit").css("display", "none");
+  });
 
-    // Redirect to the Edit Invoice page with the invoice ID as a parameter
-    window.location.href = `./EditPurchaseHistory.html?id=${btnId}`;
+  let editInlineId;
+  $("#dataTable").on("click", ".row-edit", function () {
+    $(".field-validation-error").remove();
+    $(".field-validation-success").remove();
+    isAdd = false;
+    editInlineId = $(this).attr("data-row-id");
+    $("#editInvoiceForm").css("display", "inline");
+    $("#btnSaveEdit").css("display", "inline");
+    const product = $(this).attr("data-row-product");
+    // console.log("product" + product);
+
+    $("#ddProduct").val(product);
+    changeRate(product);
+    $("#txtQuantity").val($(this).attr("data-quantity"));
+  });
+
+  $("#btnAddProduct").on("click", function () {
+    $(".field-validation-error").remove();
+    $(".field-validation-success").remove();
+    $("#editInvoiceForm").css("display", "inline");
+    $("#btnSaveEdit").css("display", "inline");
+    isAdd = true;
+  });
+
+  $("#btnSaveEdit").on("click", function () {
+    let dataVar = {
+      invoiceId: invId,
+      manufacturerId: partyId,
+      productId: parseInt($("#ddProduct").val()),
+      rateId: rateId,
+      quantity: parseInt($("#txtQuantity").val()),
+      date: date,
+    };
+    // console.log(dataVar);
+    $.ajax({
+      url: `${baseURL}/invoices/${isAdd ? "" : editInlineId}`,
+      type: `${isAdd ? "POST" : "PUT"}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(dataVar),
+      success: function (response) {
+        getEditList(invId);
+        if (isAdd) {
+          $("#msg").after(
+            `<span class="field-validation-success">Product added successfully!!</span>`
+          );
+          // $("#addEditSuccessModal").modal("show");
+        } else {
+          // $("#editEditSuccessModal").modal("show");
+          $("#msg").after(
+            `<span class="field-validation-success">Product edited successfully!!</span>`
+          );
+        }
+        $("#editInvoiceForm").css("display", "none");
+        $("#btnSaveEdit").css("display", "none");
+        isAdd = false;
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        $("#msg").after(
+          `<span class="field-validation-error">Something went wrong !!</span>`
+        );
+        console.log("An error occurred: " + errorThrown);
+      },
+    });
+  });
+
+  let deleteInlineId, deleteInlinebtn;
+  $("#dataTable").on("click", ".row-delete", function () {
+    $(".field-validation-error").remove();
+    $(".field-validation-success").remove();
+    console.log("delete");
+    deleteInlinebtn = $(this);
+    deleteInlineId = $(this).attr("data-row-id");
+    console.log("delete " + deleteInlineId);
+    $("#deleteEditInvoiceModal").modal("show");
+  });
+
+  $("#confirmEditDeleteBtn").on("click", function (e) {
+    e.preventDefault();
+    $.ajax({
+      url: `${baseURL}/invoices/` + deleteInlineId,
+      method: "DELETE",
+      success: function () {
+        $("#deleteEditInvoiceModal").modal("hide");
+        $("#deleteEditSuccessModal").modal("show");
+        deleteInlinebtn.parents("tr").remove();
+      },
+      error: function () {
+        console.log(error);
+      },
+    });
   });
 });
