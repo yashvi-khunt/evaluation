@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <link href="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/bootstrap-lumen.css" />
     <link rel="stylesheet" href="./css/Site.css" />
     <style>
@@ -63,44 +64,72 @@
         </div>
         <div class="table-responsive">
             <div id="invoiceTbl_wrapper" class="dataTables_wrapper no-footer">
-                <div class="dataTables_length" id="invoiceTbl_length"><label>Show <select name="invoiceTbl_length"
-                            id="txtPageSize" aria-controls="invoiceTbl" class="">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select> entries</label></div>
-                <div id="invoiceTbl_filter" class="dataTables_filter"><label>Search:<input type="search" id="txtSearch"
-                            class="" placeholder="" aria-controls="invoiceTbl"></label></div>
-                <table class="table dataTable no-footer" id="invoiceTbl" aria-describedby="invoiceTbl_info">
-                    <thead>
-                        <tr>
-                            <th tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
-                                aria-label="#: activate to sort column descending" aria-sort="ascending">#
-                            </th>
-                            <th class="sorting sorting_asc" tabindex="0" aria-controls="invoiceTbl" rowspan="1"
-                                colspan="1" aria-label="BillNo: activate to sort column ascending">Bill No</th>
-                            <th class="sorting" tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
-                                aria-label="Party: activate to sort column ascending">Party</th>
-                            <th class="sorting" tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
-                                aria-label="Date: activate to sort column ascending">Date</th>
-                            <th class="sorting" tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
-                                aria-label="Amount: activate to sort column ascending">Amount</th>
-                            <th tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
-                                aria-label="Action: activate to sort column ascending">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <div class="dataTables_info" id="invoiceTbl_info" role="status" aria-live="polite"> Showing 1 to 5 of 5
-                    entries</div>
-                <div class="dataTables_paginate paging_simple_numbers" id="invoiceTbl_paginate"><a
-                        class="paginate_button previous disabled" aria-controls="invoiceTbl" aria-disabled="true"
-                        role="link" data-dt-idx="previous" tabindex="-1"
-                        id="invoiceTbl_previous">Previous</a><span></span><a class="paginate_button next disabled"
-                        aria-controls="invoiceTbl" aria-disabled="true" role="link" data-dt-idx="next" tabindex="-1"
-                        id="invoiceTbl_next">Next</a></div>
+
+                <form class="form-inline" method="get" autocomplete="off">
+                    <form class="form-inline" method="get" autocomplete="off">
+                        <div>
+                            <input type="date" value="" name="fromdate" placeholder="From Date" class="form-control"
+                                id="fromdate">
+                            <input type="date" value="" name="todate" placeholder="To Date" class="form-control"
+                                id="todate">
+                        </div>
+                        <select id="selectProducts" multiple="multiple" class=" form-control">
+                        </select>
+                        <div>
+                            <button type="button" id="submit" class="btn-info"> Submit</button>
+                            <button type="button" id="clear" class="btn-secondary"> Clear</button>
+                        </div>
+                    </form>
+
+                    <div class="search_wrapper">
+                        <div class="dataTables_length" id="invoiceTbl_length"><label>Show <select
+                                    name="invoiceTbl_length" id="txtPageSize" aria-controls="invoiceTbl" class="">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select> entries</label></div>
+
+                        <!-- <div class="dataTables_filter">
+                        <label for="selectProducts">Search Product:</label>
+                        <select id="selectProducts" multiple="multiple" class="js-example-basic-multiple">
+                           
+                        </select>
+                    </div> -->
+                        <div id="invoiceTbl_filter" class="dataTables_filter"><label>Search:<input type="search"
+                                    id="txtSearch" class="" placeholder="Bill No.,Party,Amount"
+                                    aria-controls="invoiceTbl"></label></div>
+                    </div>
+                    <table class="table dataTable no-footer" id="invoiceTbl" aria-describedby="invoiceTbl_info">
+                        <thead>
+                            <tr>
+                                <th tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
+                                    aria-label="#: activate to sort column descending" aria-sort="ascending">#
+                                </th>
+                                <th class="sorting sorting_asc" tabindex="0" aria-controls="invoiceTbl" rowspan="1"
+                                    colspan="1" aria-label="BillNo: activate to sort column ascending">Bill No</th>
+                                <th class="sorting" tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
+                                    aria-label="Party: activate to sort column ascending">Party</th>
+                                <th class="sorting" tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
+                                    aria-label="Date: activate to sort column ascending">Date</th>
+                                <th class="sorting" tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
+                                    aria-label="Amount: activate to sort column ascending">Amount</th>
+                                <th tabindex="0" aria-controls="invoiceTbl" rowspan="1" colspan="1"
+                                    aria-label="Action: activate to sort column ascending">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="dataTables_info" id="invoiceTbl_info" role="status" aria-live="polite"> Showing 1 to 5
+                        of 5
+                        entries</div>
+                    <div class="dataTables_paginate paging_simple_numbers" id="invoiceTbl_paginate"><a
+                            class="paginate_button previous disabled" aria-controls="invoiceTbl" aria-disabled="true"
+                            role="link" data-dt-idx="previous" tabindex="-1"
+                            id="invoiceTbl_previous">Previous</a><span></span><a class="paginate_button next disabled"
+                            aria-controls="invoiceTbl" aria-disabled="true" role="link" data-dt-idx="next" tabindex="-1"
+                            id="invoiceTbl_next">Next</a></div>
             </div>
         </div>
     </div>
@@ -254,7 +283,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script type="text/javascript" src="./js/common.js"></script>
     <script type="text/javascript" src="./js/invoice.js"></script>

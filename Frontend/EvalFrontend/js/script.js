@@ -96,8 +96,7 @@ $(document).ready(function () {
       url: `${baseURL}/invoices/invoiceId`,
       async: false,
       success: function (result) {
-        invId = result.invoiceId + 1;
-        // console.log(invId);
+        invId = result;
       },
       error: function (error) {
         console.log(error);

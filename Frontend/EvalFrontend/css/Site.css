@@ -168,3 +168,20 @@ textarea {
   cursor: pointer;
   color: #ddd;
 }
+
+.search_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px;
+  margin-bottom: 2px;
+}
+
+.form-inline {
+  justify-content: space-between;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+  height: 24px;
+  font-family: unset;
+}

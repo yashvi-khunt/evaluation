@@ -12,20 +12,19 @@ $(document).ready(function () {
     $(".field-validation-error").remove();
     e.preventDefault();
 
-    if (!isPasswordValid(pwd)) {
-      $("#password").addClass("input-validation-error");
-      $("#msg").text(
-        "Password must be at least 8-16 characters long and include at least one letter and one number."
-      );
-      return;
-    }
-
     $("#username").removeClass("input-validation-error");
     $("#password").removeClass("input-validation-error");
     $(".field-validation-error").remove();
 
     const uname = $("#username").val();
     const pwd = $("#password").val();
+    if (!isPasswordValid(pwd)) {
+      $("#password").addClass("input-validation-error");
+      $("#msg").after(
+        "<span class='field-validation-error'>Password must be at least 8-16 characters long and include at least one letter and one number.</span>"
+      );
+      return;
+    }
 
     const dataVar = {
       userName: uname,
@@ -71,15 +70,17 @@ $(document).ready(function () {
 
     if (!isPasswordValid(pwd)) {
       $("#password").addClass("input-validation-error");
-      $("#msg").text(
-        "Password must be at least 8-16 characters long and include at least one letter and one number."
+      $("#msg").after(
+        "<span class='field-validation-error'>Password must be at least 8-16 characters long and include at least one letter and one number.</span>"
       );
       return;
     }
 
     if (pwd !== cfPwd) {
       $("#cfpassword").addClass("input-validation-error");
-      $("#msg").text("Passwords do not match");
+      $("#msg").after(
+        "<span class='field-validation-error'>Passwords do not match</span>"
+      );
       return;
     }
 

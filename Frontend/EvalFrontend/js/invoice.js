@@ -8,14 +8,12 @@ let tableData = [];
 const invoiceTBody = document.querySelector("#invoiceTbl tbody");
 let totalEntries;
 let selectedColumn = 1,
-  sortOrder;
+  sortOrder,
+  search,
+  inputString;
 
-const getList = async function (url, errorMsg = "Something went wrong") {
-  return fetch(url).then((response) => {
-    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
-    return response.json();
-  });
-};
+const fromDate = document.getElementById("fromdate");
+const toDate = document.getElementById("todate");
 
 Array.prototype.swapFirstTwo = function () {
   if (this.length >= 2) {
@@ -23,6 +21,8 @@ Array.prototype.swapFirstTwo = function () {
   }
   return this;
 };
+
+// update - showing 1 to 10 of 12 entries msg
 const updateEntriesInfo = async function (search) {
   const startEntry = (currPage - 1) * pageSize + 1;
   const endEntry = Math.min(currPage * pageSize, totalEntries);
@@ -31,8 +31,7 @@ const updateEntriesInfo = async function (search) {
   infoElement.innerHTML = `Showing ${startEntry} to ${endEntry} of ${totalEntries} entries`;
 };
 
-updateEntriesInfo();
-
+// populate table data
 const fillTable = function (invoices) {
   invoiceTBody.innerHTML = "";
   let html = "";
@@ -65,6 +64,7 @@ const fillTable = function (invoices) {
   invoiceTBody.insertAdjacentHTML("afterbegin", html);
 };
 
+//paginate block -- previous -1-2- next
 const paginate = async function () {
   let ulPage = document.getElementById("invoiceTbl_paginate");
   let numOfPages = Math.ceil(totalEntries / pageSize);
@@ -72,12 +72,12 @@ const paginate = async function () {
   class="paginate_button previous disabled" aria-controls="invoiceTbl" aria-disabled="true"
   role="link" data-dt-idx="previous" tabindex="-1"
   id="invoiceTbl_previous">Previous</a>`;
-  for (let i = 1; i <= numOfPages; i++) {
+  for (let i = 0; i < numOfPages; i++) {
     html += `<a class="paginate_button ${
-      i === 1 ? "current" : ""
-    }" aria-controls="invoiceTbl" role="link" data-dt-idx="${
-      i - 1
-    }" tabindex="${i - 1}">${i}</a>`;
+      i + 1 == currPage ? "current" : ""
+    }" aria-controls="invoiceTbl" role="link" data-dt-idx="${i}" tabindex="${i}">${
+      i + 1
+    }</a>`;
   }
   html += `<a class="paginate_button next disabled"
   aria-controls="invoiceTbl" aria-disabled="true" role="link" data-dt-idx="next" tabindex="-1"
@@ -88,8 +88,51 @@ const paginate = async function () {
 
 $(document).ready(function () {
   const invoiceTable = $("#invoiceTbl");
+  $.ajax({
+    url: `${baseURL}/products/allProducts`,
+    method: "GET",
+    success: function (data) {
+      var ddProduct = $("#selectProducts");
+      ddProduct.empty();
+      // ddProduct.append('<option disabled value="">Select a product</option>');
+      data.forEach(function (product) {
+        ddProduct.append(
+          '<option value="' + product.id + '">' + product.name + "</option>"
+        );
+      });
 
-  $("#invoiceTbl_paginate").on("click", "a", function () {
+      // $("#selectProducts").select2();
+      ddProduct.select2({
+        placeholder: "Select products",
+        allowClear: true,
+      });
+    },
+    error: function (error) {
+      console.error("Error fetching products:", error);
+    },
+  });
+
+  $("#submit").on("click", function () {
+    const startDate = $("#fromdate").val();
+    const endDate = $("#todate").val();
+    const products = $("#selectProducts").val();
+    inputString = startDate ? `&startDate=${startDate}` : "";
+    inputString += endDate ? `&endDate=${endDate}` : "";
+    inputString +=
+      products.length > 0 ? `&productIds=${products.join("&productIds=")}` : "";
+    getTableData();
+  });
+
+  $("#clear").on("click", function () {
+    $("#fromdate").val("");
+    $("#todate").val("");
+    $("#selectProducts").val(null).trigger("change");
+    inputString = "";
+    getTableData();
+  });
+
+  $("#invoiceTbl_paginate").on("click", ".paginate_button", function () {
+    console.log(this);
     $("#invoiceTbl_paginate a.current").removeClass("current");
     $(this).addClass("current");
     currPage = $(this).text();
@@ -98,39 +141,41 @@ $(document).ready(function () {
 
   txtPageSize.addEventListener("change", function () {
     pageSize = txtPageSize.value;
+    getTableData();
   });
 
   $("#txtSearch").on("change keyup", function () {
-    // console.log($("#txtSearch").val());
-    var search = $("#txtSearch").val();
-    // console.log(search, pageSize);
-    getTableData(search);
+    search = $("#txtSearch").val();
+    getTableData();
   });
 
   $("#paginate").on("click", "a", function () {
     $("#paginate a.active").removeClass("active");
-    // console.log(this);
     $(this).addClass("active");
     currPage = $(this).text();
 
     getTableData();
   });
 
-  const getTableData = function (search) {
+  const getTableData = function () {
     var list;
+    let queryString = `page=${currPage}&pageSize=${pageSize}&sortColumn=${selectedColumn}&sortOrder=${
+      sortOrder ? sortOrder : 0
+    }&subStr=${search ? search : ""}${inputString ? inputString : ""}`;
+    console.log(queryString);
     $.ajax({
-      url: `${baseURL}/invoices/search?page=${currPage}&pageSize=${pageSize}&sortColumn=${selectedColumn}&sortOrder=${
-        sortOrder ? sortOrder : 0
-      }&subStr=${search ? search : ""}`,
+      url: `${baseURL}/invoices/search?${queryString}`,
       method: "GET",
       async: false,
       success: function (data) {
-        list = data;
+        // console.log(data);
+        totalEntries = data.totalEntries;
+        list = data.purchaseHistoryList;
       },
     });
     // console.log(list);
     fillTable(list);
-    totalEntries = list.length;
+    // totalEntries = list.length;
     updateEntriesInfo(search);
     paginate();
   };
@@ -166,7 +211,7 @@ $(document).ready(function () {
       success: function () {
         $("#deleteInvoiceModal").modal("hide");
         $("#deleteSuccessModal").modal("show");
-        deletebtn.parents("tr").remove();
+        getTableData();
       },
       error: function () {
         console.log(error);

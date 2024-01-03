@@ -83,9 +83,9 @@ namespace EvaluationProject.Controllers
 
         [HttpDelete("invoiceId/{id}")]
         //[Route("invoiceId")]
-        public async Task<ActionResult> DeleteByInvoiceId(int invoiceId)
+        public async Task<ActionResult> DeleteByInvoiceId(int id)
         {
-            var purchaseHistories = await _context.PurchaseHistories.Where(m => m.InvoiceId == invoiceId).ToListAsync();
+            var purchaseHistories = await _context.PurchaseHistories.Where(m => m.InvoiceId == id).ToListAsync();
             if (purchaseHistories == null) { return NotFound(); }
 
             //purchaseHistory.IsDeleted = true;
@@ -104,7 +104,7 @@ namespace EvaluationProject.Controllers
             var purchaseHistories = await _context.PurchaseHistories.SingleOrDefaultAsync(m => m.Id == id);
             if (purchaseHistories == null) { return NotFound(); }
 
-           _context.PurchaseHistories.Remove(purchaseHistories);
+            _context.PurchaseHistories.Remove(purchaseHistories);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -112,32 +112,13 @@ namespace EvaluationProject.Controllers
 
         [HttpGet]
         [Route("invoiceId")]
-        public async Task<ActionResult<InvoiceIdDTO>> GetInvoiceId()
+        public async Task<ActionResult> GetInvoiceId()
         {
 
             var inv = await _context.PurchaseHistories.MaxAsync(x => x.InvoiceId);
-            var invoice = await _context.PurchaseHistories.FirstOrDefaultAsync(p => p.InvoiceId == inv);
 
-            var result = mapper.Map<InvoiceIdDTO>(invoice);
-            return result;
+            return Ok(inv + 1);
 
-        }
-        [HttpGet]
-        [Route("count")]
-        public async Task<IActionResult> GetInvoiceCount()
-        {
-            var count = await _context.PurchaseHistories
-                .Where(m => m.IsDeleted == false)
-                 .GroupBy(p => new { p.InvoiceId })
-                .Select(group => new PurchaseHistoryListDTO
-                {
-                    InvoiceId = group.Key.InvoiceId,
-                }).CountAsync();
-            if (count == 0)
-            {
-                return NotFound();
-            }
-            return Ok(count);
         }
 
 
@@ -147,28 +128,61 @@ namespace EvaluationProject.Controllers
                                                                           [FromQuery] int pageSize = 10,
                                                                           [FromQuery] string? subStr = null,
                                                                           [FromQuery] int sortColumn = 0,
-                                                                          [FromQuery] int sortOrder = 0
+                                                                          [FromQuery] int sortOrder = 0,
+                                                                          [FromQuery] List<int>? productIds = null,
+                                                                          [FromQuery] DateTime? startDate = null,
+                                                                          [FromQuery] DateTime? endDate = null
                                                                         )
         {
             if (page > pageSize || page <= 0 || pageSize <= 0)
             {
                 return BadRequest();
             }
-
+            IQueryable<PurchaseHistory> productQuery;
             IQueryable<PurchaseHistoryListDTO> query, phList;
-            phList = _context.PurchaseHistories
-                .Where(m => m.IsDeleted == false)
-                .Include(p => p.Manufacturer)
-                .Include(p => p.Rate)
-                .GroupBy(p => new { p.InvoiceId, p.Manufacturer.Name, p.Date })
-                .Select(group => new PurchaseHistoryListDTO
-                {
-                    InvoiceId = group.Key.InvoiceId,
-                    ManufacturerName = group.Key.Name,
-                    Date = group.Key.Date,
-                    GrandTotal = group.Sum(p => p.Rate.Amount * p.Quantity)
-                });
 
+            if (productIds != null && productIds.Any())
+            {
+                productQuery = _context.PurchaseHistories
+                   .Where(m => m.IsDeleted == false)
+                    .Where(p => productIds.Contains(p.ProductId));
+            }
+            else
+            {
+
+
+                productQuery = _context.PurchaseHistories
+                    .Where(m => m.IsDeleted == false);
+            }
+
+            if (startDate.HasValue)
+            {
+                productQuery = productQuery.Where(ph => ph.Date >= startDate.Value.Date);
+            }
+
+            if (endDate.HasValue)
+            {
+                productQuery = productQuery.Where(ph => ph.Date <= endDate.Value.Date);
+            }
+
+            productQuery = productQuery.Include(p => p.Manufacturer)
+                   .Include(p => p.Rate).Include(p => p.Product);
+
+
+            phList = productQuery
+                   .GroupBy(p => new
+                   {
+                       p.InvoiceId,
+                       p.Manufacturer.Name,
+                       p.Date
+                   })
+                   .Select(group => new PurchaseHistoryListDTO
+                   {
+                       InvoiceId = group.Key.InvoiceId,
+                       ManufacturerName = group.Key.Name,
+                       Date = group.Key.Date,
+                       GrandTotal = group.Sum(p => p.Rate.Amount * p.Quantity)
+                   });
 
             switch (sortColumn)
             {
@@ -189,18 +203,25 @@ namespace EvaluationProject.Controllers
                     break;
             }
 
-
             if (!string.IsNullOrEmpty(subStr))
             {
-                query = query.Where(ph => ph.ManufacturerName.Contains(subStr) || ph.Date.ToString().Contains(subStr) || ph.InvoiceId.ToString().Contains(subStr) || ph.GrandTotal.ToString().Contains(subStr));
+                query = query.Where(ph => ph.ManufacturerName.Contains(subStr) || ph.InvoiceId.ToString().Contains(subStr) || ph.GrandTotal.ToString().Contains(subStr));
             }
 
-
+            int totalEntries = await query.CountAsync();
             query = query.Skip((page - 1) * pageSize).Take(pageSize);
 
             var purchaseHistories = await query.ToListAsync();
             var purchaseHistoryDTOs = mapper.Map<List<PurchaseHistoryListDTO>>(purchaseHistories);
-            return Ok(purchaseHistoryDTOs);
+
+            var result = new
+            {
+                TotalEntries = totalEntries,
+                PurchaseHistoryList = purchaseHistoryDTOs
+            };
+
+            return Ok(result);
+            //return Ok(purchaseHistoryDTOs);
         }
 
     }

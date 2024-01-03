@@ -28,6 +28,14 @@ namespace EvaluationProject.Controllers
             return productsDTO;
         }
 
+        [HttpGet("allProducts")]
+        public async Task<ActionResult<List<ProductDTO>>> GetAllProducts()
+        {
+            var products = await _context.Products.ToListAsync();
+            var productsDTO = mapper.Map<List<ProductDTO>>(products);
+            return productsDTO;
+        }
+
         [HttpGet("{id}", Name = "getProduct")]
         public async Task<ActionResult<ProductDTO>> GetProductById(int id)
         {
