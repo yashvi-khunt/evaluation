@@ -4,6 +4,9 @@ $(document).ready(function () {
   var table = $("#productTbl").DataTable({
     ajax: {
       url: `${baseURL}/products`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       dataSrc: "",
     },
     columns: [
@@ -53,6 +56,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/products/` + deleteId,
       method: "DELETE",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function () {
         $("#deleteProductModal").modal("hide");
         $("#deleteSuccessModal").modal("show");
@@ -99,6 +105,7 @@ $(document).ready(function () {
       type: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {
@@ -137,6 +144,7 @@ $(document).ready(function () {
       type: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {

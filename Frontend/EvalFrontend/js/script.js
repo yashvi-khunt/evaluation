@@ -1,6 +1,11 @@
 const baseURL = " https://localhost:7146/api";
 const getList = async function (url, errorMsg = "Something went wrong") {
-  return fetch(url).then((response) => {
+  return fetch(url,{
+    method:"GET",
+    headers:{
+      "Authorization":"Bearer "+localStorage.getItem("token")
+    },
+  }).then((response) => {
     if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
     return response.json();
   });
@@ -35,7 +40,11 @@ const init = async function () {
 
   const txtRate = document.getElementById("txtRate");
   const rate = await fetch(
-    `${baseURL}/rates/byProduct/${productList[0].id}`
+    `${baseURL}/rates/byProduct/${productList[0].id}`,{
+      method:"GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },}
   ).then((response) => {
     if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
     return response.json();
@@ -54,15 +63,17 @@ $(document).ready(function () {
     $.ajax({
       type: "GET",
       url: `${baseURL}/products/byManufacturer/${partyId}`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
-        // console.log(data)
+        console.log(data)
         $("#ddProduct").empty();
         $.each(data, function (index, item) {
           $("#ddProduct").append(
             '<option value="' + item.id + '">' + item.name + "</option>"
           );
         });
-
         changeRate(data[0].id);
       },
       error: function (error) {
@@ -75,6 +86,9 @@ $(document).ready(function () {
     $.ajax({
       type: "GET",
       url: `${baseURL}/rates/byProduct/${productId}`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (result) {
         // console.log(result);
         $("txtRate").val("");
@@ -94,6 +108,9 @@ $(document).ready(function () {
     $.ajax({
       type: "GET",
       url: `${baseURL}/invoices/invoiceId`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       async: false,
       success: function (result) {
         invId = result;
@@ -130,6 +147,9 @@ $(document).ready(function () {
     $.ajax({
       type: "POST",
       url: `${baseURL}/invoices`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       contentType: "application/json",
       data: JSON.stringify(obj),
       success: function (result) {

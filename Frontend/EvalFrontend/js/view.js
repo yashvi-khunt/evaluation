@@ -9,7 +9,12 @@ const tableBody = document.querySelector("#dataTable tbody");
 const btnPrint = document.getElementById("btnPrintInvoice");
 const btnClose = document.getElementById("btnClose");
 const getList = async function (url, errorMsg = "Something went wrong") {
-  return fetch(url).then((response) => {
+  return fetch(url,{
+    method:"GET",
+    headers:{
+      "Authorization":"Bearer "+localStorage.getItem("token")
+    },
+  }).then((response) => {
     if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
     return response.json();
   });

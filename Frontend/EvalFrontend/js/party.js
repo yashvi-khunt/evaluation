@@ -4,6 +4,10 @@ $(document).ready(function () {
   var table = $("#partyTbl").DataTable({
     ajax: {
       url: `${baseURL}/manufacturers`,
+      type: "GET",
+      headers: {
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       dataSrc: "",
     },
     columns: [
@@ -53,6 +57,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/manufacturers/` + deleteId,
       method: "DELETE",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function () {
         $("#deletePartyModal").modal("hide");
         $("#deleteSuccessModal").modal("show");
@@ -90,7 +97,7 @@ $(document).ready(function () {
       return;
     }
     var newParty = $("#partyName").val();
-    console.log(newParty);
+    console.log(localStorage.getItem("token"));
     var dataVar = {
       name: newParty,
     };
@@ -99,6 +106,7 @@ $(document).ready(function () {
       type: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {
@@ -115,7 +123,7 @@ $(document).ready(function () {
             `<span class="field-validation-error">${xhr.responseText}</span>`
           );
         } else {
-          alert("An error occurred: " + errorThrown);
+          console.log("An error occurred: " + errorThrown);
         }
       },
     });
@@ -137,6 +145,7 @@ $(document).ready(function () {
       type: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {

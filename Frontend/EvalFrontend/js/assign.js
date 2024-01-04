@@ -4,6 +4,10 @@ $(document).ready(function () {
   var table = $("#mappingTbl").DataTable({
     ajax: {
       url: `${baseURL}/mappings`,
+      method:"GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       dataSrc: "",
     },
     columns: [
@@ -47,6 +51,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/manufacturers`,
       method: "GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
         var ddParty = $("#ddParty");
         ddParty.empty();
@@ -67,6 +74,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/products`,
       method: "GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
         var ddProduct = $("#ddProduct");
         ddProduct.empty(); // Clear existing options
@@ -107,6 +117,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/mappings/` + deleteId,
       method: "DELETE",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function () {
         $("#deleteAssignModal").modal("hide");
         $("#deleteSuccessModal").modal("show");
@@ -126,6 +139,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/mappings/${editId}`,
       method: "GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
         console.log(data);
         $("#ddParty").val(data.manufacturerId);
@@ -153,6 +169,7 @@ $(document).ready(function () {
       type: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {
@@ -195,6 +212,7 @@ $(document).ready(function () {
       type: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {

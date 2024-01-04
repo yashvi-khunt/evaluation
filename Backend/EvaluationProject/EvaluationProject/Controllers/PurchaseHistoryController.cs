@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EvaluationProject.DTOs;
 using EvaluationProject.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 //using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using System.Globalization;
 namespace EvaluationProject.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/invoices")]
     public class PurchaseHistoryController : ControllerBase
     {

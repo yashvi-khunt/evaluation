@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EvaluationProject.DTOs;
 using EvaluationProject.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace EvaluationProject.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/products")]
     public class ProductController : ControllerBase
     {

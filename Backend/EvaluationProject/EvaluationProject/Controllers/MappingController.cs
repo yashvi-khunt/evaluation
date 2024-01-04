@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using EvaluationProject.DTOs;
 using EvaluationProject.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EvaluationProject.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/mappings")]
     public class MappingController : ControllerBase
     {

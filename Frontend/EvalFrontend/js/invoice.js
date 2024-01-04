@@ -91,6 +91,9 @@ $(document).ready(function () {
   $.ajax({
     url: `${baseURL}/products/allProducts`,
     method: "GET",
+    headers:{
+      "Authorization":"Bearer "+localStorage.getItem("token")
+    },
     success: function (data) {
       var ddProduct = $("#selectProducts");
       ddProduct.empty();
@@ -166,6 +169,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/invoices/search?${queryString}`,
       method: "GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       async: false,
       success: function (data) {
         // console.log(data);
@@ -208,6 +214,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/invoices/invoiceId/` + deleteId,
       method: "DELETE",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function () {
         $("#deleteInvoiceModal").modal("hide");
         $("#deleteSuccessModal").modal("show");
@@ -235,6 +244,9 @@ $(document).ready(function () {
     $.ajax({
       type: "GET",
       url: `${baseURL}/products/byInvoice/${partyId}`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
         // console.log(data);
         $("#ddProduct").empty();
@@ -256,6 +268,9 @@ $(document).ready(function () {
     $.ajax({
       type: "GET",
       url: `${baseURL}/invoices/${id}`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
         // console.log(data)
         $("#dataTable tbody").empty();
@@ -277,6 +292,9 @@ $(document).ready(function () {
     $.ajax({
       type: "GET",
       url: `${baseURL}/rates/byProduct/${productId}`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (result) {
         // console.log(result);
         $("#txtRate").val("");
@@ -363,6 +381,7 @@ $(document).ready(function () {
       type: `${isAdd ? "POST" : "PUT"}`,
       headers: {
         "Content-Type": "application/json",
+        "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {
@@ -407,6 +426,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/invoices/` + deleteInlineId,
       method: "DELETE",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function () {
         $("#deleteEditInvoiceModal").modal("hide");
         $("#deleteEditSuccessModal").modal("show");

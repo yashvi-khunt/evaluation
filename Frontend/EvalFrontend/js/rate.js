@@ -3,6 +3,9 @@ $(document).ready(function () {
   var table = $("#rateTbl").DataTable({
     ajax: {
       url: `${baseURL}/rates`,
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       dataSrc: "",
     },
     columns: [
@@ -53,6 +56,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/products`,
       method: "GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
         var ddProduct = $("#ddProduct");
         ddProduct.empty(); // Clear existing options
@@ -80,6 +86,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/rates/` + deleteId,
       method: "DELETE",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function () {
         $("#deleteRateModal").modal("hide");
         $("#deleteSuccessModal").modal("show");
@@ -113,6 +122,9 @@ $(document).ready(function () {
     $.ajax({
       url: `${baseURL}/rates/${editId}`,
       method: "GET",
+      headers:{
+        "Authorization":"Bearer "+localStorage.getItem("token")
+      },
       success: function (data) {
         console.log(data);
         $("#ddProduct").val(data.productId);
@@ -143,7 +155,7 @@ $(document).ready(function () {
       url: `${baseURL}/rates/${editId}`,
       type: "PUT",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json", "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {
@@ -190,7 +202,7 @@ $(document).ready(function () {
       url: `${baseURL}/rates`,
       type: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json", "Authorization":"Bearer "+localStorage.getItem("token")
       },
       data: JSON.stringify(dataVar),
       success: function (response) {
